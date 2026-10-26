@@ -31,6 +31,18 @@ towers = {
     "hero": "u"
 }
 
+binds ={
+    "top": ",",
+    "mid": ".",
+    "bot": "/",
+    "del": "backspace",
+    "t_ab_1": "home",
+    "t_ab_2": "end",
+    "t_ab_3": "delete",
+    "target": "tab",
+    "opt1": "pagedown",
+}
+
 #price constants
 tower_price_e = {
     "dart": 170,
@@ -216,7 +228,7 @@ tower_price_e = {
     ]
 }
 
-tower_price_m = {
+tower_price_n = {
     "dart": 200,
     "dart_u": [
         [140, 200, 320, 1800, 15000],
@@ -1036,3 +1048,75 @@ heroes_price_i = {
     "ezili": 595,
     "quincy": 585,
 }
+
+heroes_price_c = {      #change
+    "churchill": 2160,
+    "corvus": 1430,
+    "benjamin": 1295,
+    "psi": 1080,
+    "adora": 1080,
+    "brickell": 970,
+    "rosalia": 945,
+    "silas": 920,
+    "etienne": 920,
+    "pat": 865,
+    "geraldo": 810,
+    "gwendolin": 785,
+    "striker": 755,
+    "obyn": 700,
+    "dan": 700,
+    "sauda": 650,
+    "ezili": 595,
+    "quincy": 585,
+}
+
+#targeting #https://www.bloonswiki.com/Targeting_option
+targets = ["first", "last", "close", "strong"]
+targets_elite_s = ["first", "last", "close", "strong", "elite"] #he himself autoaticly switches to elite
+targets_spike = ["normal", "close", "smart", "set_target", "automatic"]
+
+normal = [
+    "dart",
+    "boomerang",
+    "bomb",
+    "glue",
+    "desperado",
+    "sniper",
+    "buccaneer",
+    "wizard",
+    "super",#cannot adjust for 030
+    "ninja",
+    "alchemist",
+    "druid",
+    "mermonkey",
+    "skywarden",
+    "engineer",
+    "handler"
+]
+
+normal_unless_upgrd = [
+    "tack",      #500 adds normal
+    "ice",       #003 adds normal
+    "village",   #500 adds normal
+    "spike"      #002 adds spike
+]
+
+adds_button = [
+    "boomerang",    #(1)000 changing hand
+    "sub",          #-(1)300 than it also has 0/1 submarge icon (add ti normal unless)
+    "wizard",       #-(2')004 spawn point add, (1)120 fire
+    "mermonkey",    #-(1)004 adds placeable totem
+    "skywarden",        #200?
+    "spike"         #-(1)002 adds set_target
+    "engineer",     #-030 adds opion to change foam location
+    "handler"       #-111 merge, and option to change placemnt of mob
+]
+
+way_different = [
+    #"ace",
+    #"heli",
+    #"mortar",      #just the "set target"
+    #"dartling",    #untill  005 just the normal and "set target"
+]
+
+#"farm",
