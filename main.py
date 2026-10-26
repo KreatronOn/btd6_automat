@@ -15,15 +15,12 @@ def on_press(key):
         os._exit(0)
 keyboard.Listener(on_press=on_press).start()
 
+#initializing
+screen = screenspace.Screen(screenspace.monitor_under_cursor())
+cash.init(screen)
+mokey.init("sauda", screen, 0)
+
 def main():
-    time.sleep(1/10)
-
-    #initializing
-    screen = screenspace.Screen(screenspace.monitor_under_cursor())
-    cash.init(screen)
-    mokey.init("sauda", screen, 0)
-
-
     dart1 = monkey(vec2(0.5, 0.5), "boomerang")
 
     dart1.upgrd(upgrade(0, 2, 5))
@@ -38,6 +35,7 @@ def main():
 print("Waiting for a mouse click to trigger main()... (Press F11 to abort)")
 def on_click(x, y, button, pressed):
     if pressed:
+        time.sleep(1/10)
         main()
         return False #listens only for the firs click
 with mouse.Listener(on_click=on_click) as listener:
