@@ -45,4 +45,21 @@ upgrade - holds 3 ints for each upgrade path
 
 monkey - class for a tower
 
+---
 to be continued
+
+bullet points to be added to readme:
+- think of this as a library for writing your own macros
+- link to ninja kiwi terms of service
+- documentation is in line, fix
+
+? - yea i dont know if ill do that
+functionality to be added:
+- finish tower settings (the ones changed with pageup, pagedown)
+- finish targeting on towers with alternate targeting
+- add proper controls for each ability?
+- round_wait(round) that could read the current round and wait till given one
+- add support for different aspect ratios (mainly the cost and round grab)
+- add functions to start a given map on given difficulty
+- map with golden balloon map detection?
+- hero selection function
