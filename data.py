@@ -44,6 +44,7 @@ binds ={
     "opt2": "pageup",
     "centr": "up",
     "merge": "'",
+    "pause": "esc",
 }
 
 #price constants
@@ -1052,7 +1053,7 @@ heroes_price_i = {
     "quincy": 585,
 }
 
-heroes_price_c = {      #change
+heroes_price_c = {
     "churchill": 2160,
     "corvus": 1430,
     "benjamin": 1295,
@@ -1118,7 +1119,7 @@ adds_button = [
     "skywarden",    #(1)200 reach button 7s?
     "spike",        #(1)002 adds set_target(3) 0s
     "engineer",     #030 adds opion to change foam location 0s
-    "handler"       #-111 merge, and option to change placemnt of mob
+    "handler"       #111 merge, and option to change placemnt of mob
 ]
 
 way_different = [

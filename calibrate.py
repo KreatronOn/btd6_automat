@@ -1,34 +1,42 @@
 import time
 import mss
+import pyautogui
 from pynput import keyboard
 
 from myvar import vec2, upgrade
 import screenspace
 
 running = True
+saved_locations = []
 
 def on_press(key):
-    global running
-    if key == keyboard.Key.f11:
+    global running, saved_locations
+    if key == keyboard.Key.f9:
         running = False
-        return False  # stops the listener
+        return False
+    elif key == keyboard.Key.f4:
+        px, py = pyautogui.position()
+        screen = screenspace.Screen(screenspace.monitor_under_cursor())
+        pos = vec2(px, py)
+        nx, ny = screen.to_norm(pos.x, pos.y)
+        
+        saved_locations.append({
+            "nx": nx,
+            "ny": ny,
+        })
+        
+        print(f"\n[Saved #{len(saved_locations)}] norm: ({nx:.4f}, {ny:.4f})")
 
 keyboard.Listener(on_press=on_press).start()
 
-print("Running... Move the mouse freely across monitors. Press F11 to quit.\n")
+print("Press F4 to save the current coordinate.")
+print("Press F9 to quit.\n")
 
 with mss.mss() as sct:
     while running:
-        # Automatically detect which monitor the mouse is on right now
         screen = screenspace.Screen(screenspace.monitor_under_cursor())
 
-        # Grab position using screenspace's pointer lookup
-        # (We query pointer via a quick tkinter call matching screenspace)
-        import tkinter as tk
-        root = tk.Tk()
-        root.withdraw()
-        px, py = root.winfo_pointerx(), root.winfo_pointery()
-        root.destroy()
+        px, py = pyautogui.position()
 
         pos = vec2(px, py)
         nx, ny = screen.to_norm(pos.x, pos.y)
@@ -39,10 +47,13 @@ with mss.mss() as sct:
             r, g, b = (0, 0, 0)
 
         print(
-            f"\rMonitor left: {screen.left:5d} | px: ({pos.x:5d}, {pos.y:4d}) | RGB=({r}, {g}, {b})     \n"
+            f"\rpx: ({pos.x:5d}, {pos.y:4d}) | RGB=({r}, {g}, {b})     \n"
             f"norm: ({nx:.4f}, {ny:.4f})\033[K\033[A",
             end="", flush=True,
         )
         time.sleep(0.05)
 
 print("\n\nStopped.")
+print(f"Total saved locations ({len(saved_locations)}):")
+for i, loc in enumerate(saved_locations, 1):
+    print(f"vec2({loc['nx']:.4f}, {loc['ny']:.4f}),")

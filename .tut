@@ -3,6 +3,6 @@ in terminal:
 source .venv/bin/activate
 
 you need:
-.venv/bin/python -m pip install pyautogui mss opencv-python numpy pynput
+.venv/bin/python -m pip install pyautogui mss opencv-python numpy pynput pillow pyscreeze
 
 
