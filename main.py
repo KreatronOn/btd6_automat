@@ -21,13 +21,14 @@ cash.init(screen)
 mokey.init("sauda", screen, 0)
 
 def main():
-    dart1 = monkey(vec2(0.5, 0.5), "boomerang")
+    dart1 = monkey(vec2(0.3, 0.5), "engineer")
 
-    dart1.upgrd(upgrade(0, 2, 5))
+    dart1.upgrd(upgrade(0, 3, 0))
 
-    dart1.retargeting("strong")
+    #dart1.retargeting("set_target")
 
-    dart1.set_option()
+    time.sleep(1)
+    dart1.set_option(vec2(0.32, 0.5))
 
     #del dart1
 

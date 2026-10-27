@@ -59,7 +59,7 @@ class monkey:
     position = vec2()
     upgrades = upgrade(0, 0, 0)
     target_i = 0
-    option:bool = 0
+    option = 0
 
     def __init__(self, _position, _type):
         self.position = _position
@@ -150,20 +150,20 @@ class monkey:
         pyautogui.press(binds["t_ab_"+str(num)])
         self.close_upgrd()
 
-    def norm_target_change(self):
+    def norm_target_change(self, type_of_trageting):
         time.sleep(self.mouse_move_time)
         pyautogui.press(binds["target"])
         if self.type == "sniper" and elite_sniper:
-            self.target_i = (self.target_i+1)%len(targets_elite_s)
+            self.target_i = (self.target_i+1)%len(type_of_trageting)
         else:
-            self.target_i = (self.target_i+1)%len(targets)
+            self.target_i = (self.target_i+1)%len(type_of_trageting)
         #print("targeting changed to", targets[target_i])
     
     def norm_target(self, target):
         self.open_upgrd()
         trys = 0
         for i in range (len(targets)+1):
-            self.norm_target_change()
+            self.norm_target_change(targets)
             if target == targets[self.target_i]:
                 break
             trys += 1
@@ -176,7 +176,7 @@ class monkey:
             self.open_upgrd()
             trys = 0
             for i in range (len(targets_elite_s)+1):
-                self.norm_target_change()
+                self.norm_target_change(targets_elite_s)
                 if target == targets_elite_s[self.target_i]:
                     break
                 trys += 1
@@ -186,17 +186,17 @@ class monkey:
                 return
 
     def spike_target(self, target):
-                self.open_upgrd()
-                trys = 0
-                for i in range (len(targets_spike)+1):
-                    self.norm_target_change()
-                    if target == targets_spike[self.target_i]:
-                        break
-                    trys += 1
-                self.close_upgrd()
-                if trys == len(targets_spike)+1:
-                    print("targeting not found")
-                    return
+        self.open_upgrd()
+        trys = 0
+        for i in range (len(targets_spike)+1):
+            self.norm_target_change(targets_spike)
+            if target == targets_spike[self.target_i]:
+                break
+            trys += 1
+        self.close_upgrd()
+        if trys == len(targets_spike)+1:
+            print("targeting not found")
+            return
 
     def retargeting(self, target):
         if self.type in normal:
@@ -211,15 +211,62 @@ class monkey:
                 self.norm_target(target)
             elif self.type == "village" and self.upgrades.a >= 5:
                 self.norm_target(target)
+            elif self.type == "sub" and not self.option:
+                self.norm_target(target)
+            elif self.type == "spike" and self.upgrades.c >= 2:
+                self.spike_target(target)
+                
+            print("retargeting to:", target)
         else:
             print("this monkey doesnt have targeting")
 
-    def set_option(self):
+    def target_click(self, pos:vec2):
+        print("placing target at:", pos.x, pos.y)
+        px_pos = screen.to_px(pos)
+        pyautogui.moveTo(px_pos.x, px_pos.y, self.mouse_move_time)
+        pyautogui.click()
+        time.sleep(self.mouse_move_time*5)
+
+    def target_point(self, pos:vec2, name):
+        self.open_upgrd()
+        pyautogui.press(binds[name])
+        
+        if pos.x == 0 and pos.y == 0:
+            print("location not given")
+            return
+        self.target_click(pos)
+        
+        self.close_upgrd()
+
+    def set_option(self, opt = vec2()):
         if self.type in adds_button:
             if self.type == "boomerang":
                 self.open_upgrd()
                 pyautogui.press(binds["opt1"])
                 self.close_upgrd()
+                self.option = not self.option
+            elif self.type == "sub" and self.upgrades.a >= 3:
+                self.open_upgrd()
+                pyautogui.press(binds["opt1"])
+                self.close_upgrd()
+                self.option = not self.option
+            elif self.type == "mermonkey" and self.upgrades.c >= 4:
+                if not self.option:
+                    self.target_point(opt, "opt1")
+                else:
+                    self.open_upgrd()
+                    pyautogui.press(binds["opt1"])
+                    self.close_upgrd()
+
+                self.option = not self.option
+            elif self.type == "spike" and self.upgrades.c >= 2 and self.target_i == 3:
+                self.target_point(opt, "opt1")
+            elif self.type == "engineer" and self.upgrades.b >= 3:
+                self.target_point(opt, "opt1")
+            elif self.type == "wizard" and self.upgrades.c >= 4:
+                self.target_point(opt, "opt2")
+            elif self.type == "wizard" and self.upgrades.a >=1 and self.upgrades.b >= 2:
+                self.target_point(opt, "opt1")
 
     def dele(self):
         print("deleting", self.type)

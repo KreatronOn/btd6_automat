@@ -41,6 +41,7 @@ binds ={
     "t_ab_3": "delete",
     "target": "tab",
     "opt1": "pagedown",
+    "opt2": "pageup",
 }
 
 #price constants
@@ -1102,13 +1103,13 @@ normal_unless_upgrd = [
 ]
 
 adds_button = [
-    "boomerang",    #(1)000 changing hand
-    "sub",          #-(1)300 than it also has 0/1 submarge icon (add ti normal unless)
-    "wizard",       #-(2')004 spawn point add, (1)120 fire
-    "mermonkey",    #-(1)004 adds placeable totem
+    "boomerang",    #(1)000 changing hand 0s
+    "sub",          #(1)300 submerging 1s?
+    "wizard",       #-(2')004 spawn point, (1)120 fire
+    "mermonkey",    #(1)004 adds placeable totem 5s?
     "skywarden",        #200?
-    "spike"         #-(1)002 adds set_target
-    "engineer",     #-030 adds opion to change foam location
+    "spike",        #(1)002 adds set_target(3) 0s
+    "engineer",     #030 adds opion to change foam location 0s
     "handler"       #-111 merge, and option to change placemnt of mob
 ]
 
