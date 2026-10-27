@@ -28,6 +28,41 @@ class upgrade:
     def __iter__(self):
         return iter((self.a, self.b, self.c))
 
+    def __str__(self):
+        return f"{self.a}, {self.b}, {self.c}"
+
+    def __repr__(self):
+        return f"upgrade({self.a}, {self.b}, {self.c})"
+
     def is_valid(self):
         low, mid, high = sorted((self.a, self.b, self.c))
         return low == 0 and mid <= 2 and high <= 5
+
+    def _as_tuple(self, other):
+        if isinstance(other, upgrade):
+            return (other.a, other.b, other.c)
+        return tuple(other)
+    
+    def _compare(self, other, op_func):
+        other_tuple = self._as_tuple(other)
+        valid_pairs = [(s, o) for s, o in zip(self, other_tuple) if s != 0 and o != 0]
+        
+        if not valid_pairs:
+            return True 
+            
+        return all(op_func(s, o) for s, o in valid_pairs)
+
+    def __lt__(self, other):
+        return self._compare(other, lambda s, o: s < o)
+
+    def __le__(self, other):
+        return self._compare(other, lambda s, o: s <= o)
+
+    def __gt__(self, other):
+        return self._compare(other, lambda s, o: s > o)
+
+    def __ge__(self, other):
+        return self._compare(other, lambda s, o: s >= o)
+
+    def __eq__(self, other):
+        return self._compare(other, lambda s, o: s == o)

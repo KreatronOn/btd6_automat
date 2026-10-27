@@ -3,22 +3,25 @@
 # ==🟡project wip==
 
 ### About:
-btd6_automat is a macro-like python script that allows for basic automation of tower placing and modifying
+btd6_automat is a macro-like, library-like python script that allows for most* automation of tower placing and modifying, and some menu navigation, which also means there is little to no protection from when you type in something that will break the rest of the run
 it is configured for full monkey knowledge setup and is meant to automate boring part of the game (like getting sapper achievement)
 I assume that the user has some programming knowledge, knows python syntax and how to run a python script
 
+most* - right now Im planning to have everything except for powers, and Im still thinking of proper ability handling
+
 ---
 ### ==🔴WARNING!!!==
-this script will most likely result in a ban if used in most of online competitive modes (especially races) and in serious accusations of being a jerk and/or a noob
+this script will most likely result in a ban if used in most of online competitive modes (especially races (its not even optimized for that very well)) and in serious accusations of being a jerk and/or a noob
 
 ---
 ### Usage:
 1. Download script
-2. Open main.py
-3. Modify the main() function
-4. Make sure that btd6 window is on entire screen and nothing will be covering it
-5. Run main()
-6. Click on btd6 window
+2. Check binds in data.py
+3. Open main.py
+4. Modify the main() function
+5. Make sure that btd6 window is on entire screen and nothing will be covering it
+6. Run main()
+7. Click on btd6 window
 
 ---
 ### Documentation:
@@ -49,17 +52,15 @@ monkey - class for a tower
 to be continued
 
 bullet points to be added to readme:
-- think of this as a library for writing your own macros
-- link to ninja kiwi terms of service
 - documentation is in line, fix
+- im using linux mint and testing on windows is required
+- only works on 16:9
 
 ? - yea i dont know if ill do that
 functionality to be added:
-- finish tower settings (the ones changed with pageup, pagedown)
-- finish targeting on towers with alternate targeting
-- add proper controls for each ability?
 - round_wait(round) that could read the current round and wait till given one
-- add support for different aspect ratios (mainly the cost and round grab)
 - add functions to start a given map on given difficulty
 - map with golden balloon map detection?
 - hero selection function
+- calibrate will save the position on some button press
+- checking for correct data

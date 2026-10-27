@@ -15,22 +15,24 @@ def on_press(key):
         os._exit(0)
 keyboard.Listener(on_press=on_press).start()
 
-#initializing
-screen = screenspace.Screen(screenspace.monitor_under_cursor())
-cash.init(screen)
-mokey.init("sauda", screen, 0)
 
 def main():
-    dart1 = monkey(vec2(0.3, 0.5), "engineer")
+    #initializing
+    screen = screenspace.Screen(screenspace.monitor_under_cursor())
+    cash.init(screen)
+    mokey.init("sauda", screen, 0)
 
-    dart1.upgrd(upgrade(0, 3, 0))
+    monkey1 = monkey(vec2(0.3, 0.5), "handler")
+    monkey2 = monkey(vec2(0.3, 0.6), "handler")
 
-    #dart1.retargeting("set_target")
+    monkey1.upgrd(upgrade(0, 2, 0))
+    monkey2.upgrd(upgrade(0, 1, 0))
 
+    #monkey1.should_target_camo(True)
     time.sleep(1)
-    dart1.set_option(vec2(0.32, 0.5))
-
-    #del dart1
+    monkey1.set_option(vec2(0.2, 0.5))
+    monkey2.set_option(monkey1)
+    #monkey1.set_option()
 
 #mouse clicks
 print("Waiting for a mouse click to trigger main()... (Press F11 to abort)")

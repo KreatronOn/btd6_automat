@@ -5,7 +5,13 @@ import time
 from myvar import vec2, upgrade
 from screenspace import Screen
 from cash import get_cash
-from data import towers, tower_price_c, tower_price_e, tower_price_h, tower_price_i, tower_price_n, heroes_price_e, heroes_price_h, heroes_price_i, heroes_price_n, binds, targets, normal, targets_elite_s, normal_unless_upgrd, targets_spike, adds_button
+from data import \
+binds, towers,\
+tower_price_c, tower_price_e, tower_price_h, tower_price_i, tower_price_n,\
+heroes_price_e, heroes_price_h, heroes_price_i, heroes_price_n, heroes_price_c,\
+normal, normal_unless_upgrd, adds_button, way_different, change_targeting,\
+targets, targets_elite_s, targets_spike, targets_heli, targets_heli_p, targets_ace, targets_ace_c, targets_dartling, targets_dartling_i,\
+can_target_camo
 
 screen:Screen = None
 tower_prices = None
@@ -17,7 +23,7 @@ hero_price = None
 #ability targeting
 #hero 
 
-#usable: __init__, upgrd, ability, retargeting*, del
+#usable: __init__, upgrd, ability, retargeting, set_option, should_target_camo, dele
 
 elite_sniper:bool = 0
 
@@ -53,17 +59,16 @@ def cash_wait(money):
 
 class monkey:
     mouse_move_time = 0.1
-    upgrades_open:bool = False
-
-    type = ""
-    position = vec2()
-    upgrades = upgrade(0, 0, 0)
-    target_i = 0
-    option = 0
 
     def __init__(self, _position, _type):
         self.position = _position
         self.type = _type
+
+        self.upgrades_open:bool = False
+        self.upgrades = upgrade(0, 0, 0)
+        self.target_i = 0
+        self.option = 0
+        self.target_camo: bool = False
 
         cash_wait(tower_prices[_type])
         
@@ -124,6 +129,7 @@ class monkey:
                 case 2:
                     self.upgrades.c += 1
             upgrad += 1
+            self.targeting_chang_on_update()
             
     def upgrd(self, paths:upgrade):
         if not paths.is_valid():
@@ -137,8 +143,6 @@ class monkey:
         self.path_upgrd(0, paths.a)
         self.path_upgrd(1, paths.b)
         self.path_upgrd(2, paths.c)
-        
-        global_upgrades(self, self.type, paths)
 
         print("upgraded to: "+str(self.upgrades.a)+"-"+str(self.upgrades.b)+"-"+str(self.upgrades.c))
 
@@ -150,6 +154,17 @@ class monkey:
         pyautogui.press(binds["t_ab_"+str(num)])
         self.close_upgrd()
 
+    def targeting_chang_on_update(self):
+        if self.type in change_targeting:
+            if self.type == "heli" and self.upgrades.a == 2:
+                self.target_i = change_targeting[self.type]
+            elif self.type == "ace" and self.upgrades.c == 2:
+                self.target_i = change_targeting[self.type]
+            elif self.type == "sniper" and self.upgrades.b == 5:
+                print("aaaaaaaaaaa")
+                global_upgrades(self)
+                self.target_i = change_targeting[self.type]
+
     def norm_target_change(self, type_of_trageting):
         time.sleep(self.mouse_move_time)
         pyautogui.press(binds["target"])
@@ -159,86 +174,90 @@ class monkey:
             self.target_i = (self.target_i+1)%len(type_of_trageting)
         #print("targeting changed to", targets[target_i])
     
-    def norm_target(self, target):
+    def target(self, target, targeting_type = targets):
         self.open_upgrd()
         trys = 0
-        for i in range (len(targets)+1):
-            self.norm_target_change(targets)
-            if target == targets[self.target_i]:
+        for i in range (len(targeting_type)+1):
+            self.norm_target_change(targeting_type)
+            if target == targeting_type[self.target_i]:
                 break
             trys += 1
         self.close_upgrd()
-        if trys == len(targets)+1:
-            print("targeting not found")
-            return
-
-    def elite_target(self, target):
-            self.open_upgrd()
-            trys = 0
-            for i in range (len(targets_elite_s)+1):
-                self.norm_target_change(targets_elite_s)
-                if target == targets_elite_s[self.target_i]:
-                    break
-                trys += 1
-            self.close_upgrd()
-            if trys == len(targets_elite_s)+1:
-                print("targeting not found")
-                return
-
-    def spike_target(self, target):
-        self.open_upgrd()
-        trys = 0
-        for i in range (len(targets_spike)+1):
-            self.norm_target_change(targets_spike)
-            if target == targets_spike[self.target_i]:
-                break
-            trys += 1
-        self.close_upgrd()
-        if trys == len(targets_spike)+1:
+        if trys == len(targeting_type)+1:
             print("targeting not found")
             return
 
     def retargeting(self, target):
         if self.type in normal:
             if self.type == "sniper" and elite_sniper:
-                pass
+                print("aaaaaaaaaaa")
+                self.target(target, targets_elite_s)
             else:
-                self.norm_target(target)
+                self.target(target)
         elif self.type in normal_unless_upgrd:
             if self.type == "tack" and self.upgrades.a >= 5:
-                self.norm_target(target)
+                self.target(target)
             elif self.type == "ice" and self.upgrades.c >= 3:
-                self.norm_target(target)
+                self.target(target)
             elif self.type == "village" and self.upgrades.a >= 5:
-                self.norm_target(target)
+                self.target(target)
             elif self.type == "sub" and not self.option:
-                self.norm_target(target)
+                self.target(target)
             elif self.type == "spike" and self.upgrades.c >= 2:
-                self.spike_target(target)
+                self.target(target, targets_spike)
                 
             print("retargeting to:", target)
+        elif self.type in way_different:
+            if self.type == "heli":
+                if self.upgrades.a >= 2:
+                    print(self.target_i)
+                    self.target(target, targets_heli_p)
+                else:
+                    self.target(target, targets_heli)
+            elif self.type == "ace":
+                if self.upgrades.c >= 2:
+                    self.target(target, targets_ace_c)
+                else:
+                    self.target(target, targets_ace)
+            elif self.type == "dartling":
+                if self.upgrades.c >= 6:
+                    self.target(target, targets_dartling_i)
+                else:
+                    self.target(target, targets_dartling)
+            elif self.type == "mortar":
+                print("yea this is not the place for this")
         else:
             print("this monkey doesnt have targeting")
 
-    def target_click(self, pos:vec2):
-        print("placing target at:", pos.x, pos.y)
-        px_pos = screen.to_px(pos)
+    def target_click(self, pos, double = None):
+        if isinstance(pos, vec2):
+            px_pos = screen.to_px(pos)
+            print("placing target at:", pos.x, pos.y)
+        else:
+            px_pos = screen.to_px(pos.position)
+        
+        if double != None:
+            px_pos2 = screen.to_px(double)
+            pyautogui.moveTo(px_pos2.x, px_pos2.y, self.mouse_move_time)
+            pyautogui.click()
+            time.sleep(self.mouse_move_time*2)
+        
         pyautogui.moveTo(px_pos.x, px_pos.y, self.mouse_move_time)
         pyautogui.click()
-        time.sleep(self.mouse_move_time*5)
+        time.sleep(self.mouse_move_time*2)
 
-    def target_point(self, pos:vec2, name):
+    def target_point(self, pos, name, double = None):
         self.open_upgrd()
         pyautogui.press(binds[name])
         
-        if pos.x == 0 and pos.y == 0:
+        if pos == None:
             print("location not given")
             return
-        self.target_click(pos)
+        self.target_click(pos, double)
         
         self.close_upgrd()
 
-    def set_option(self, opt = vec2()):
+    def set_option(self, opt = None, double = None):
         if self.type in adds_button:
             if self.type == "boomerang":
                 self.open_upgrd()
@@ -267,7 +286,55 @@ class monkey:
                 self.target_point(opt, "opt2")
             elif self.type == "wizard" and self.upgrades.a >=1 and self.upgrades.b >= 2:
                 self.target_point(opt, "opt1")
+            elif self.type == "skywarden" and self.upgrades.a >= 2:
+                self.open_upgrd()
+                pyautogui.press(binds["opt1"])
+                self.close_upgrd()
+                self.option = not self.option
+            elif self.type == "handler" and (self.upgrades.a > 0 or self.upgrades.b > 0 or self.upgrades.c > 0):
+                if isinstance(opt, vec2):
+                    self.target_point(opt, "opt2")
+                else:
+                    self.target_point(opt, "merge")
+        elif self.type in way_different:
+            if self.type == "heli" and (self.target_i == 1 or self.target_i == 2):
+                if self.target_i == 1:
+                    self.target_point(opt, "opt1")
+                else:
+                    self.target_point(opt, "opt1", double)
+            elif self.type == "ace":
+                if self.target_i == 4 and opt != None:
+                    self.target_point(opt, "centr")
+                else:
+                    self.open_upgrd()
+                    pyautogui.press(binds["opt1"])
+                    self.close_upgrd()
+                    self.option = not self.option
+            elif self.type == "mortar":
+                self.target_point(opt, "target")
+            elif self.type == "dartling" and self.target_i == 1 :
+                self.target_point(opt, "opt1")
 
+    def should_target_camo(self, camo:bool):
+        if camo == self.target_camo:
+            return
+        if not self.type in can_target_camo:
+            print("tower cant see camo")
+            return
+        if can_target_camo[self.type] > self.upgrades:
+            print("path cant see camo")
+            return
+
+        opt = 1
+
+        if self.type == "skywarden":
+            opt = 2
+
+        self.open_upgrd()
+        pyautogui.press(binds["opt"+opt])
+        self.close_upgrd()
+        self.option = not self.option
+        
     def dele(self):
         print("deleting", self.type)
 
@@ -276,9 +343,8 @@ class monkey:
         pyautogui.press(binds["del"])
 
 
-def global_upgrades(monkey:monkey, monkey_name, upgrad:upgrade):
+def global_upgrades(monkey:monkey):
     global elite_sniper
 
-    if monkey_name == "snipier" and upgrad.b >= 5:
+    if monkey.type == "sniper":
         elite_sniper = 1
-        monkey.target_i = 4

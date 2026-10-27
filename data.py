@@ -1,4 +1,4 @@
-#it can make differance if you dont have all discount monkey knowlage
+from myvar import upgrade
 
 #binding
 towers = {
@@ -22,7 +22,7 @@ towers = {
     "alchemist": "f",
     "druid": "g",
     "mermonkey": "p",
-    "skywarden": "",
+    "skywarden": ";",
     "farm": "h",
     "spike": "j",
     "village": "k",
@@ -42,6 +42,8 @@ binds ={
     "target": "tab",
     "opt1": "pagedown",
     "opt2": "pageup",
+    "centr": "up",
+    "merge": "'",
 }
 
 #price constants
@@ -1073,8 +1075,14 @@ heroes_price_c = {      #change
 
 #targeting #https://www.bloonswiki.com/Targeting_option
 targets = ["first", "last", "close", "strong"]
-targets_elite_s = ["first", "last", "close", "strong", "elite"] #he himself autoaticly switches to elite
+targets_elite_s = ["first", "last", "close", "strong", "elite"]
 targets_spike = ["normal", "close", "smart", "set_target", "automatic"]
+targets_heli = ["follow_mouse", "lock_in_place", "patrol_points"]
+targets_heli_p = ["follow_mouse", "lock_in_place", "patrol_points", "pursuit"]
+targets_ace = ["circle", "infinite", "eight", "wingmonkey"]
+targets_ace_c = ["circle", "infinite", "eight", "centered_path", "wingmonkey"]
+targets_dartling = ["normal", "locked"]
+targets_dartling_i = ["normal", "locked", "target_independent"]
 
 normal = [
     "dart",
@@ -1105,19 +1113,37 @@ normal_unless_upgrd = [
 adds_button = [
     "boomerang",    #(1)000 changing hand 0s
     "sub",          #(1)300 submerging 1s?
-    "wizard",       #-(2')004 spawn point, (1)120 fire
+    "wizard",       #(2)004 spawn point, (1)120 fire 0s
     "mermonkey",    #(1)004 adds placeable totem 5s?
-    "skywarden",        #200?
+    "skywarden",    #(1)200 reach button 7s?
     "spike",        #(1)002 adds set_target(3) 0s
     "engineer",     #030 adds opion to change foam location 0s
     "handler"       #-111 merge, and option to change placemnt of mob
 ]
 
 way_different = [
-    #"ace",
-    #"heli",
-    #"mortar",      #just the "set target"
-    #"dartling",    #untill  005 just the normal and "set target"
+    "heli",        #follow mouse, lock in place, patrol points, 200 pursuit
+    "ace",         #circle, inf, eight, wingmonkey, 002 contered #reverse flight button
+    "mortar",      #just the "set target"
+    "dartling",    #normal, set target, 005 target independent
 ]
+
+change_targeting:dict = {
+    "heli": 3,     #
+    "ace": 3,      #
+    "sniper": 4,   #-
+}
+
+can_target_camo = {
+    "dart": upgrade(0, 0, 2),
+    "ice": upgrade(2, 0, 3),
+    "desperado": upgrade(0, 1, 0),
+    "sniper": upgrade(0, 1, 0),
+    "buccaneer": upgrade(0, 0, 2),
+    "wizard": upgrade(0, 0, 2),     #two buttons
+    "super": upgrade(0, 0, 2),
+    "ninja": upgrade(0, 0, 0),
+    "skywarden": upgrade(2, 0, 0),  #two buttons
+}
 
 #"farm",
