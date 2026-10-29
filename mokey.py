@@ -220,7 +220,7 @@ class monkey:
                 else:
                     self.target(target, targets_ace)
             elif self.type == "dartling":
-                if self.upgrades.c >= 6:
+                if self.upgrades.c >= 4:
                     self.target(target, targets_dartling_i)
                 else:
                     self.target(target, targets_dartling)

@@ -7,7 +7,7 @@ btd6_automat is a macro-like, library-like python script that allows for most* a
 it is configured for full monkey knowledge setup and is meant to automate boring part of the game (like getting sapper achievement)
 I assume that the user has some programming knowledge, knows python syntax and how to run a python script
 
-most* - right now I'm planning to have everything except for powers, and I'm still thinking of proper ability handling
+`most* - right now I'm planning to have everything except for powers, and I'm still thinking of proper ability handling`
 
 ---
 ### ==🔴WARNING!!!==
@@ -52,9 +52,9 @@ monkey - class for a tower
 to be continued
 
 bullet points to be added to readme:
-- documentation is in line, fix
 - im using linux mint and testing on windows is required
 - only works on 16:9
+- needed packages
 
 ? - yea i dont know if ill do that
 functionality to be added:
@@ -67,3 +67,5 @@ functionality to be added:
 - checking for if something changed? like when placing the pixel color changes
 - farm collecting while waiting
 - heroes_price_c correct
+- exclude .tut
+- some functions like place_next_to? that would account for monkey hitbox and place it right next to one another?

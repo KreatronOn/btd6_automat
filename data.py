@@ -1126,7 +1126,7 @@ way_different = [
     "heli",        #follow mouse, lock in place, patrol points, 200 pursuit
     "ace",         #circle, inf, eight, wingmonkey, 002 contered #reverse flight button
     "mortar",      #just the "set target"
-    "dartling",    #normal, set target, 005 target independent
+    "dartling",    #normal, set target, 004 target independent
 ]
 
 change_targeting:dict = {
