@@ -3,9 +3,11 @@
 # ==🟡project wip==
 
 ### About:
-> btd6_automat is a macro-like, library-like python script that allows for most* automation of tower placing and modifying, and some menu navigation, which also means there is little to no protection from when you type in something that will break the rest of the run
-> it is configured for full monkey knowledge setup and is meant to automate boring part of the game (like getting sapper achievement)
-> I assume that the user has some programming knowledge, knows python syntax and how to run a python script
+ btd6_automat is a macro-like, library-like python script that allows for most* automation of tower placing and modifying, and some menu navigation, which also means there is little to no protection from when you type in something that will break the rest of the run
+ 
+it is configured for full monkey knowledge setup and is meant to automate boring part of the game (like getting sapper achievement)
+
+I assume that the user has some programming knowledge, knows python syntax and how to run a python script
 
 `most* - right now I'm planning to have everything except for powers, and I'm still thinking of proper ability handling`
 ### Reqirements:
@@ -61,36 +63,36 @@ this script will most likely result in a ban if used in most of online competiti
 	- methods:
 		- is_valid() - returns a bool if the upgrades are valid (for example 111 gives false, 034 gives false )
 	- supported operations: (they check if each path meets the requirements, expect for when its 0 )
-		- <
-		- <=
-		- >
-		- >=
-		- ==
+		- `<`
+		- `<=`
+		- `>`
+		- `>=`
+		- `==`
 
-monkey - class for a tower, example: dartmonkey = monkey(vec2(0.5, 0.5), type), full list of types at the bottom
-	attributes:
-		position - the vec2 position
-		type - type of monkey 
-	constructor:
-		(pos:vec2, type:str) - full list of types at the bottom
-	methods:
-		upgrd(paths:upgrade) - upgrades the monkey in order from top to bottom paths
-		ability(num:int) - simple function to use ability of monkey, num - ability number
-		retargeting(target:str) - changes targeting to the specified one, list at the bottom
-		set_option(opt:vec2 = None, double:vec2 = None) - for changing the option, if left bland it will just push the button, like the throwing hand for boomerang, or submerge for monkey sub, when one option it can be like the mermonkey totem thing, or the engineer foam, but also targeting for mortar, and double for heli patrol points
-		should_target_camo(camo:bool) - should the monkey target camo first, for example on ninja
-		dele() - deletes the monkey
+- monkey - class for a tower, example: dartmonkey = monkey(vec2(0.5, 0.5), type), full list of types at the bottom
+	- attributes:
+		- position - the vec2 position
+		- type - type of monkey 
+	- constructor:
+		- (pos:vec2, type:str) - full list of types at the bottom
+	- methods:
+		- upgrd(paths:upgrade) - upgrades the monkey in order from top to bottom paths
+		- ability(num:int) - simple function to use ability of monkey, num - ability number
+		- retargeting(target:str) - changes targeting to the specified one, list at the bottom
+		- set_option(opt:vec2 = None, double:vec2 = None) - for changing the option, if left bland it will just push the button, like the throwing hand for boomerang, or submerge for monkey sub, when one option it can be like the mermonkey totem thing, or the engineer foam, but also targeting for mortar, and double for heli patrol points
+		- should_target_camo(camo:bool) - should the monkey target camo first, for example on ninja
+		- dele() - deletes the monkey
 
-other functions:
-	map_select(name:str) - will choose the map you type in, either from main menu or map select screen
-	difficulty_select(diff:str) - will choose difficulty, list below
-	gold_bln_map(diff:int = 0) - plays the map with golden balloon, 0 for beginner maps, 1 - intermediate, 2 - advanced, 3 - expert
-	monkey_team_map - you get it
-	play(opt:int = -1) - changes play speed, -1 clicks space one, 1 sets the slower one, 2 faster one
-	game_done_wait(home = True) - waits for the end screen and by default leaves to home, if False, turns on freeplay
-	insta_monkey_wait() - will wait out until the instamonkey screen on 100 round and skip it
-	time.sleep(x) - stops program for x seconds
-	click(vec2) - makes a mouse click on specified coordinate
+- other functions:
+	- map_select(name:str) - will choose the map you type in, either from main menu or map select screen
+	- difficulty_select(diff:str) - will choose difficulty, list below
+	- gold_bln_map(diff:int = 0) - plays the map with golden balloon, 0 for beginner maps, 1 - intermediate, 2 - advanced, 3 - expert
+	- monkey_team_map - you get it
+	- play(opt:int = -1) - changes play speed, -1 clicks space one, 1 sets the slower one, 2 faster one
+	- game_done_wait(home = True) - waits for the end screen and by default leaves to home, if False, turns on freeplay
+	- insta_monkey_wait() - will wait out until the instamonkey screen on 100 round and skip it
+	- time.sleep(x) - stops program for x seconds
+	- click(vec2) - makes a mouse click on specified coordinate
 
 ---
 ? - yea i dont know if ill do that
