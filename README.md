@@ -59,10 +59,8 @@ bullet points to be added to readme:
 
 ? - yea i dont know if ill do that
 functionality to be added:
-- round_wait(round) that could read the current round and wait till given one
-- hero selection function
-- checking for correct data?
 - checking for if something changed? like when placing the pixel color changes
-- farm collecting while waiting
-- heroes_price_c correct
+- collection event interuption
+- checking for correct data?
+- round_wait(round) that could read the current round and wait till given one?
 - some functions like place_next_to? that would account for monkey hitbox and place it right next to one another?

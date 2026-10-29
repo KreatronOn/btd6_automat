@@ -28,7 +28,7 @@ towers = {
     "village": "k",
     "engineer": "l",
     "handler": "i",
-    "hero": "u"
+    "hero": "u",
 }
 
 binds ={
@@ -1148,4 +1148,4 @@ can_target_camo = {
     "skywarden": upgrade(2, 0, 0),  #two buttons
 }
 
-#"farm",
+#farm

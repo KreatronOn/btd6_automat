@@ -1,6 +1,6 @@
 import pyautogui
 import time
-
+import math
 
 from myvar import vec2, upgrade
 from screenspace import Screen
@@ -13,43 +13,60 @@ normal, normal_unless_upgrd, adds_button, way_different, change_targeting,\
 targets, targets_elite_s, targets_spike, targets_heli, targets_heli_p, targets_ace, targets_ace_c, targets_dartling, targets_dartling_i,\
 can_target_camo
 
+pyautogui.PAUSE = 0
+pyautogui.FAILSAFE = True
+
 screen:Screen = None
 tower_prices = None
 hero_price = None
 
 #screen_half = 0.4351562 #for this vale and less the upgrades show on right
 
-#ability has no check if its aviable
-#ability targeting
-#hero 
-
-#usable: __init__, upgrd, ability, retargeting, set_option, should_target_camo, dele
-
 elite_sniper:bool = 0
+
+farms = []
 
 def init(_screen):
     global screen
     screen = _screen
-    
 
+def circle_around(pos:vec2, radius=.08, steps=36, loops=1, delay=0.01):
+    aspect = 16/9
+
+    for i in range(steps * loops + 1):
+        angle = 2 * math.pi * i / steps
+        x = pos.x + radius * math.cos(angle)
+        y = pos.y + radius * aspect * math.sin(angle)
+
+        p = screen.to_px(x, y)
+
+        pyautogui.moveTo(p.x, p.y)
+        time.sleep(delay)
+current = 0
+def farming():
+    global current
+    if len(farms) >= 1:
+        circle_around(farms[current].position)
+        current += (current+1)%len(farms)
+    
 def difficulty(diff = 0):
     global tower_prices, hero_price
     match diff:
         case 0:
             tower_prices = tower_price_e
-            #hero_price = heroes_price_e[hero]
+            hero_price = heroes_price_e
         case 1:
             tower_prices = tower_price_n
-            #hero_price = heroes_price_n[hero]
+            hero_price = heroes_price_n
         case 2:
             tower_prices = tower_price_h
-            #hero_price = heroes_price_h[hero]
+            hero_price = heroes_price_h
         case 3:
             tower_prices = tower_price_i
-            #hero_price = heroes_price_i[hero]
+            hero_price = heroes_price_i
         case 4:
             tower_prices = tower_price_c
-            #hero_price = heroes_price_c[hero]
+            hero_price = heroes_price_c
 
 def cash_wait(money):
     mon = get_cash()
@@ -57,11 +74,12 @@ def cash_wait(money):
         time.sleep(1/10)
         print("waiting for cash:", mon, "/", money)
         mon = get_cash()
+        farming()
     print("waiting for cash:", mon, "/", money)
 
 
 class monkey:
-    mouse_move_time = 0.1
+    mouse_move_time = .1
 
     def __init__(self, _position, _type):
         self.position = _position
@@ -73,17 +91,29 @@ class monkey:
         self.option = 0
         self.target_camo: bool = False
 
-        cash_wait(tower_prices[_type])
-        
-        pyautogui.press(towers[_type])
+        if _type in tower_prices:
+            cash_wait(tower_prices[_type])
+            pyautogui.press(towers[_type])
+        else:
+            cash_wait(hero_price[_type])
+            #pyautogui.press(towers["hero"])
+            pyautogui.keyDown(towers["hero"])
+            time.sleep(0.05)
+            pyautogui.keyUp(towers["hero"])
+
         self.click(True)
+
+        if _type == "farm":
+            farms.append(self)
 
     def click(self, initial:bool = False):
         px_pos = screen.to_px(self.position)
         pyautogui.moveTo(px_pos.x, px_pos.y, self.mouse_move_time)
-        pyautogui.click()
         if not initial:
             self.upgrades_open = not self.upgrades_open
+        else:
+            time.sleep(self.mouse_move_time)
+        pyautogui.click()
         time.sleep(self.mouse_move_time*2)
 
     def open_upgrd(self):
@@ -143,9 +173,14 @@ class monkey:
             print("yea i didnt add that")
             return
 
+        time.sleep(0.1)
+
         self.path_upgrd(0, paths.a)
         self.path_upgrd(1, paths.b)
         self.path_upgrd(2, paths.c)
+
+        if self.type == "farm" and upgrade(6, 3, 3) <= self.upgrades:
+            farms.remove(self)
 
         print("upgraded to: "+str(self.upgrades.a)+"-"+str(self.upgrades.b)+"-"+str(self.upgrades.c))
 

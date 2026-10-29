@@ -5,7 +5,7 @@ import math
 
 from myvar import vec2
 from data import binds
-from mokey import difficulty
+from mokey import difficulty, farming
 
 screen = None
 animation_time = 0.1
@@ -322,16 +322,75 @@ game_over_chimp_check = {
     vec2(0.5042, 0.5139): (91, 143, 213),
     vec2(0.2922, 0.5139): (91, 143, 213),
 }
+gm_over_check = {
+    vec2(0.3495, 0.1935): (255, 47, 0),
+    vec2(0.4156, 0.1880): (255, 51, 0),
+    vec2(0.4703, 0.1861): (255, 55, 0),
+    vec2(0.5255, 0.1935): (255, 48, 0),
+    vec2(0.5734, 0.1796): (255, 60, 0),
+    vec2(0.6115, 0.1778): (255, 62, 0),
+    vec2(0.6516, 0.1778): (255, 61, 0),
+    vec2(0.5844, 0.7806): (43, 202, 0),
+    vec2(0.5865, 0.7481): (52, 210, 0),
+    vec2(0.5891, 0.4630): (217, 31, 0),
+    vec2(0.5906, 0.4167): (224, 41, 0),
+    vec2(0.4130, 0.4176): (224, 41, 0),
+    vec2(0.4141, 0.4509): (218, 33, 0),
+    vec2(0.5375, 0.8472): (94, 225, 0),
+    vec2(0.5193, 0.8407): (255, 255, 255),
+    vec2(0.4635, 0.8389): (107, 230, 0),
+    vec2(0.4755, 0.8380): (255, 255, 255),
+    vec2(0.4953, 0.8102): (34, 158, 0),
+}
+insta_monkey_check = {
+    vec2(0.1203, 0.6407): (20, 15, 40),
+    vec2(0.3781, 0.8843): (19, 14, 38),
+    vec2(0.8969, 0.3472): (17, 13, 34),
+    vec2(0.2448, 0.3370): (42, 31, 83),
+    vec2(0.8161, 0.4361): (31, 23, 61),
+    vec2(0.4505, 0.2380): (144, 123, 0),
+    vec2(0.4193, 0.2463): (255, 217, 0),
+    vec2(0.4182, 0.2454): (255, 217, 0),
+    vec2(0.4510, 0.2370): (255, 217, 0),
+    vec2(0.4708, 0.2407): (255, 217, 0),
+    vec2(0.4917, 0.2417): (193, 164, 0),
+    vec2(0.5172, 0.2417): (255, 217, 0),
+    vec2(0.5229, 0.2417): (255, 217, 0),
+    vec2(0.5229, 0.2417): (255, 217, 0),
+    vec2(0.7927, 0.8519): (17, 13, 34),
+    vec2(0.5266, 0.9991): (0, 0, 0),
+    vec2(0.5260, 0.9991): (0, 0, 0),
+}
+collection_event_check = {
+    vec2(0.1000, 0.3444): (97, 72, 111),
+    vec2(0.3099, 0.2157): (104, 73, 122),
+    vec2(0.9328, 0.8000): (75, 53, 88),
+    vec2(0.6995, 0.7093): (112, 78, 132),
+    vec2(0.4833, 0.4157): (175, 69, 14),
+    vec2(0.4672, 0.6444): (12, 74, 0),
+    vec2(0.4531, 0.6343): (88, 223, 0),
+    vec2(0.4865, 0.6333): (255, 255, 255),
+    vec2(0.5453, 0.6352): (86, 222, 0),
+    vec2(0.2526, 0.4389): (235, 173, 99),
+    vec2(0.2505, 0.5333): (237, 180, 93),
+    vec2(0.3740, 0.0574): (145, 46, 202),
+    vec2(0.6229, 0.0676): (142, 43, 199),
+    vec2(0.6458, 0.0602): (255, 211, 22),
+    vec2(0.6583, 0.0278): (159, 49, 210),
+    vec2(0.3422, 0.0861): (246, 86, 0),
+    vec2(0.3490, 0.0315): (0, 120, 161),
+    vec2(0.5833, 0.5944): (137, 96, 162),
+    vec2(0.5849, 0.5963): (137, 96, 161),
+}
 next_btn = vec2(0.4984, 0.8370)
-home_btn = vec2(0.3740, 0.7889)
-review_btn = vec2(0.5005, 0.7861)
-freeplay_btn = vec2(0.6260, 0.7898)
-c_1_home_btn
-c_1_restart_btn
-c_1_review
-c_home_btn
-c_restart_btn
-c_review
+button1_4 = vec2(0.3260, 0.7519)
+button2_4 = vec2(0.4396, 0.7509)
+button3_4 = vec2(0.5552, 0.7472)
+button4_4 = vec2(0.6750, 0.7500)
+button1_3 = vec2(0.3844, 0.7537)
+button2_3 = vec2(0.5000, 0.7537)
+button3_3 = vec2(0.6141, 0.7537)
+
 
 def init(scrn):
     global screen
@@ -420,9 +479,16 @@ def popup():
     time.sleep(0.2)
 
 def freeplay():
-    click(freeplay_btn)
+    global play_state
+    play_state_before = play_state
+    play_state = 0
+    time.sleep(0.1)
+    click(button3_3)
+    time.sleep(0.1)
     popup()
-    play(play_state)
+    time.sleep(0.1)
+    play(play_state_before)
+    time.sleep(0.1)
 
 
 
@@ -530,6 +596,8 @@ def monkey_team_map(diff = 0):
     click(map_pos)
 
 def play(opt = -1):
+    global play_state
+
     if opt == -1:
         pyautogui.press(binds["play"])
         play_state = (play_state+1)%3
@@ -540,18 +608,49 @@ def play(opt = -1):
     for i in range(3):
         pyautogui.press(binds["play"])
         play_state = (play_state+1)%3
+        print(play_state)
+        time.sleep(0.05)
         if play_state == opt:
             break
 
-
-def game_done_wait(timeout=99999, poll=1):
+def game_done_wait(home = True, timeout=99999, poll=1):
     start = time.time()
+
+    win = True
+
+    while time.time() - start < timeout:
+        if points_check(victory_check):
+            break
+        elif points_check(gm_over_check):
+            break
+            win = False
+        elif points_check(game_over_chimp_check) or points_check(game_over_check):
+            return
+        farming()
+        time.sleep(poll)
+
+    click(next_btn)
 
     while time.time() - start < timeout:
         if points_check(game_done_check):
             break
-        if points_check(game_over_check):
-            break
-        if points_check(game_):
-            break
         time.sleep(poll)
+
+    if home:
+        if win:
+            click(button1_3)
+        else:
+            click(button1_4)
+    else:
+        freeplay()
+
+def insta_monkey_wait(timeout=99999, poll=1):
+    start = time.time()
+
+    while time.time() - start < timeout:
+        if points_check(insta_monkey_check):
+            break
+        farming()
+        time.sleep(poll)
+
+    click(vec2(0.5, 0.5))
