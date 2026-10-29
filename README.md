@@ -49,9 +49,9 @@ this script will most likely result in a ban if used in most of online competiti
 	- constructor:
 		- (x:float, y:float) - if left blank gives 0, 0
 	- supported operations:
-		- +
-		- -
-		- *
+		- `+`
+		- `-`
+		- `*`
 
 - upgrade - holds 3 ints for each upgrade path
 	- attributes:
@@ -69,7 +69,7 @@ this script will most likely result in a ban if used in most of online competiti
 		- `>=`
 		- `==`
 
-- monkey - class for a tower, example: dartmonkey = monkey(vec2(0.5, 0.5), type), full list of types at the bottom
+- monkey - class for a tower, example: dartmonkey = monkey(vec2(0.5, 0.5), type)
 	- attributes:
 		- position - the vec2 position
 		- type - type of monkey 
@@ -93,6 +93,30 @@ this script will most likely result in a ban if used in most of online competiti
 	- insta_monkey_wait() - will wait out until the instamonkey screen on 100 round and skip it
 	- time.sleep(x) - stops program for x seconds
 	- click(vec2) - makes a mouse click on specified coordinate
+
+##### lists:
+towers = "dart", "boomerang", "bomb", "tack", "ice", "glue", "desperado", "sniper", "sub", "buccaneer", "ace", "heli", "mortar", "dartling", "wizard", "super", "ninja", "alchemist", "druid", "mermonkey", "skywarden", "farm", "spike", "village", "engineer", "handler", "hero"
+
+targets = "first", "last", "close", "strong"
+
+targets_elite_s = "first", "last", "close", "strong", "elite"
+
+targets_spike = "normal", "close", "smart", "set_target", "automatic"
+
+targets_heli = "follow_mouse", "lock_in_place", "patrol_points"
+
+targets_heli_p = "follow_mouse", "lock_in_place", "patrol_points", "pursuit"
+
+targets_ace = "circle", "infinite", "eight", "wingmonkey"
+
+targets_ace_c = "circle", "infinite", "eight", "centered_path", "wingmonkey"
+
+targets_dartling = "normal", "locked"
+
+targets_dartling_i = "normal", "locked", "target_independent"
+
+difficulties = "easy", "easy_standard", "easy_sandbox", "primary_only", "deflation", "medium", "medium_standard", "medium_sandbox", "reverse", "military_only", "apopalypse", "hard", "hard_standard", "hard_sandbox", "alternate_bloons_rounds", "impoppable", "chimps", "magic_only", "double_hp_moabs", "half_cash"
+
 
 ---
 ? - yea i dont know if ill do that
