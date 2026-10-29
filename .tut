@@ -5,4 +5,8 @@ source .venv/bin/activate
 you need:
 .venv/bin/python -m pip install pyautogui mss opencv-python numpy pynput pillow pyscreeze
 
-
+when broken:
+rm -r .venv/
+python3 -m venv .venv
+.venv/bin/python -m pip install pyautogui mss opencv-python numpy pynput pillow pyscreeze
+source .venv/bin/activate

@@ -27,26 +27,29 @@ hero_price = None
 
 elite_sniper:bool = 0
 
-def init(hero, _screen, diff = 0):
-    global screen, tower_prices, hero_price
-
+def init(_screen):
+    global screen
     screen = _screen
+    
+
+def difficulty(diff = 0):
+    global tower_prices, hero_price
     match diff:
         case 0:
             tower_prices = tower_price_e
-            hero_price = heroes_price_e[hero]
+            #hero_price = heroes_price_e[hero]
         case 1:
             tower_prices = tower_price_n
-            hero_price = heroes_price_n[hero]
+            #hero_price = heroes_price_n[hero]
         case 2:
             tower_prices = tower_price_h
-            hero_price = heroes_price_h[hero]
+            #hero_price = heroes_price_h[hero]
         case 3:
             tower_prices = tower_price_i
-            hero_price = heroes_price_i[hero]
+            #hero_price = heroes_price_i[hero]
         case 4:
             tower_prices = tower_price_c
-            hero_price = heroes_price_c[hero]
+            #hero_price = heroes_price_c[hero]
 
 def cash_wait(money):
     mon = get_cash()
@@ -190,7 +193,6 @@ class monkey:
     def retargeting(self, target):
         if self.type in normal:
             if self.type == "sniper" and elite_sniper:
-                print("aaaaaaaaaaa")
                 self.target(target, targets_elite_s)
             else:
                 self.target(target)

@@ -45,6 +45,7 @@ binds ={
     "centr": "up",
     "merge": "'",
     "pause": "esc",
+    "play": "space",
 }
 
 #price constants

@@ -55,17 +55,14 @@ bullet points to be added to readme:
 - im using linux mint and testing on windows is required
 - only works on 16:9
 - needed packages
+- if you already have a save on the map the script will pause for you to select if you want to overwrite it
 
 ? - yea i dont know if ill do that
 functionality to be added:
 - round_wait(round) that could read the current round and wait till given one
-- check if in main menu in map selection is needed
-- map with golden balloon map detection?
 - hero selection function
-- calibrate will save the position on some button press
 - checking for correct data?
 - checking for if something changed? like when placing the pixel color changes
 - farm collecting while waiting
 - heroes_price_c correct
-- exclude .tut
 - some functions like place_next_to? that would account for monkey hitbox and place it right next to one another?

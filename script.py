@@ -1,7 +1,8 @@
 import time
-from mokey import monkey
+from mokey import monkey, difficulty
 from myvar import vec2, upgrade
-from menus import game_to_main, difficulty_select, map_select, click
+from menus import game_to_main, difficulty_select, map_select, gold_bln_map, monkey_team_map, play
+from menus import click
 
 import pyautogui
 
@@ -12,6 +13,9 @@ village_pos = vec2(0.3234, 0.3201)
 glue_pos = vec2(0.3289, 0.4340)
 mermonkey_pos = vec2(0.2715, 0.5319)
 engineer_pos = vec2(0.8254, 0.9618)
+
+saudap = vec2(0.3521, 0.3306)
+bucp = vec2(0.3760, 0.4917)
 
 def main_game():
     #sauda = monkey(sauda_pos, "hero")
@@ -45,23 +49,17 @@ def main_game():
     #engineer.upgrd(upgrade(0, 5, 0))
 
 def script():
-    main_game()
+    #every 100 rounds the additional insta monkey
+    map_select("spa_pits")
+    difficulty_select("easy_standard")
 
-    # map_select("skull_tweak")
+    play(2)
 
-    # difficulty_select("hard_standard")
+    time.sleep(.2)
+    pyautogui.keyDown('u')
+    time.sleep(0.05)
+    pyautogui.keyUp('u')
+    click(saudap)
 
-    # game_to_main()
-
-
-    # monkey1 = monkey(vec2(0.3, 0.5), "handler")
-    # monkey2 = monkey(vec2(0.3, 0.6), "handler")
-
-    # monkey1.upgrd(upgrade(0, 2, 0))
-    # monkey2.upgrd(upgrade(0, 1, 0))
-
-    # #monkey1.should_target_camo(True)
-    # time.sleep(1)
-    # monkey1.set_option(vec2(0.2, 0.5))
-    # monkey2.set_option(monkey1)
-    # #monkey1.set_option()
+    buc = monkey(bucp, "buccaneer")
+    buc.upgrd(upgrade(0, 4, 2))

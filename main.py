@@ -22,7 +22,7 @@ def main():
     #initializing
     screen = screenspace.Screen(screenspace.monitor_under_cursor())
     cash.init(screen)
-    mokey.init("sauda", screen, 2)
+    mokey.init(screen)
     menus.init(screen)
 
     script()

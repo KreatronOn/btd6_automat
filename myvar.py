@@ -1,7 +1,4 @@
 class vec2:
-    x: float = 0.0
-    y: float = 0.0
-
     def __init__(self, x=0.0, y=0.0):
         self.x = x
         self.y = y
@@ -14,6 +11,14 @@ class vec2:
 
     def __mul__(self, scalar):
         return vec2(self.x * scalar, self.y * scalar)
+
+    def __eq__(self, other):
+        if not isinstance(other, vec2):
+            return NotImplemented
+        return self.x == other.x and self.y == other.y
+
+    def __hash__(self):
+        return hash((self.x, self.y))
 
 class upgrade:
     a: int = 0

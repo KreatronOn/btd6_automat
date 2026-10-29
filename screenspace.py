@@ -18,10 +18,17 @@ class Screen:
         self.left, self.top = mon["left"], mon["top"]
         self.w, self.h = mon["width"], mon["height"]
 
-    def to_px(self, nx:float, ny:float):
-        return vec2(self.left + nx * self.w, self.top + ny * self.h)
-    def to_px(self, xy:vec2):
-            return vec2(self.left + xy.x * self.w, self.top + xy.y * self.h)
+    def to_px(self, *args):
+        if len(args) == 2:
+            nx, ny = args
+            x, y = self.left + nx * self.w, self.top + ny * self.h
+        elif len(args) == 1:
+            xy = args[0]
+            x, y = self.left + xy.x * self.w, self.top + xy.y * self.h
+        else:
+            raise TypeError("to_px takes 1 or 2 arguments")
+
+        return vec2(round(x), round(y))
 
     def to_norm(self, x, y):
         return (x - self.left) / self.w, (y - self.top) / self.h
