@@ -50,6 +50,7 @@ def farming():
         current += (current+1)%len(farms)
     
 def difficulty(diff = 0):
+    print("setting difficulty to:", diff)
     global tower_prices, hero_price
     match diff:
         case 0:
@@ -72,7 +73,7 @@ def cash_wait(money):
     mon = get_cash()
     while mon < money:
         time.sleep(1/10)
-        print("waiting for cash:", mon, "/", money)
+        print("waiting for cash:", mon, "/", money, end="\r", flush=True)
         mon = get_cash()
         farming()
     print("waiting for cash:", mon, "/", money)
@@ -82,6 +83,7 @@ class monkey:
     mouse_move_time = .2
 
     def __init__(self, _position, _type):
+        print("placing", _type, "at:", _position)
         self.position = _position
         self.type = _type
 
@@ -100,11 +102,13 @@ class monkey:
             pyautogui.keyDown(towers["hero"])
             time.sleep(0.05)
             pyautogui.keyUp(towers["hero"])
+            time.sleep(0.5)
 
         self.click(True)
 
         if _type == "farm":
             farms.append(self)
+
 
     def click(self, initial:bool = False):
         px_pos = screen.to_px(self.position)
@@ -128,7 +132,7 @@ class monkey:
 
     def path_upgrd(self, path, level):
         if level:
-            print("upgrading path:", path, ",to level:", level)
+            print("path:", path, ",to level:", level)
 
         upgrad:int = 0
         path_name:str = ""
@@ -165,6 +169,8 @@ class monkey:
             self.targeting_chang_on_update()
             
     def upgrd(self, paths:upgrade):
+        print("upgrading", self.type, "to:", paths)
+        
         if not paths.is_valid():
             print("wrong upgrade path")
             return
@@ -182,12 +188,14 @@ class monkey:
         if self.type == "farm" and upgrade(6, 3, 3) <= self.upgrades:
             farms.remove(self)
 
-        print("upgraded to: "+str(self.upgrades.a)+"-"+str(self.upgrades.b)+"-"+str(self.upgrades.c))
+        #print("upgraded to: "+str(self.upgrades.a))
 
     def ability(self, num:int):
         if num < 0 or num > 3:
-            print("wrong ability")
+            print("wrong ability on", self.type)
             return
+        else:
+            print("using ability:", num, ",for:", self.type)
         self.open_upgrd()
         pyautogui.press(binds["t_ab_"+str(num)])
         self.close_upgrd()
@@ -226,6 +234,7 @@ class monkey:
             return
 
     def retargeting(self, target):
+        print("for", self.type, "retargeting to:", target)
         if self.type in normal:
             if self.type == "sniper" and elite_sniper:
                 self.target(target, targets_elite_s)
@@ -242,8 +251,6 @@ class monkey:
                 self.target(target)
             elif self.type == "spike" and self.upgrades.c >= 2:
                 self.target(target, targets_spike)
-                
-            print("retargeting to:", target)
         elif self.type in way_different:
             if self.type == "heli":
                 if self.upgrades.a >= 2:
@@ -295,6 +302,7 @@ class monkey:
         self.close_upgrd()
 
     def set_option(self, opt = None, double = None):
+        print("for", self.type, "setting option:", opt, ",", double)
         if self.type in adds_button:
             if self.type == "boomerang":
                 self.open_upgrd()
@@ -353,6 +361,7 @@ class monkey:
                 self.target_point(opt, "opt1")
 
     def should_target_camo(self, camo:bool):
+        print("camo priority for", self.type, camo)
         if camo == self.target_camo:
             return
         if not self.type in can_target_camo:

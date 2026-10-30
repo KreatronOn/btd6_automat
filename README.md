@@ -32,6 +32,8 @@ this script will most likely result in a ban if used in most of online competiti
 
 ##### Notes:
 - to get positions of monkeys i recommend using the provided calibrate.py script by just running it normally, take the monkey where you want to place it and click f4, after you get every position press f9 to close the script and it will give you vec2 coordinates in the same order you took them
+- check if all the binds are correct, by default some things are nit binded to anything
+- to be careful switch cursor size to the smalest
 - positions are normalized (from 0 to 1 on width and height)
 - if you dont select map in script, make sure to set difficulty with difficulty(diff:int = 0), 0 - easy, 1 - normal, 2 - hard, 3 - impoppable, 4 - chimps (its mainly for pricing so this is enough)
 - if you dont want to go through entire game before you can open sandbox, get the positions, and hope for the best
@@ -122,9 +124,6 @@ difficulties = "easy", "easy_standard", "easy_sandbox", "primary_only", "deflati
 ? - yea i dont know if ill do that
 functionality to be added:
 - checking for if something changed? like when placing the pixel color changes
-- can you like delete just the last line from console, useful for cash_wait to not take up so mach space in output
 - collection event interruption
-- checking for correct data?
 - round_wait(round) that could read the current round and wait till given one?
 - some functions like place_next_to? that would account for monkey hitbox and place it right next to one another?
-- the play struggles because you cant get to 0 normally

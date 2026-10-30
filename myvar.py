@@ -20,6 +20,9 @@ class vec2:
     def __hash__(self):
         return hash((self.x, self.y))
 
+    def __str__(self):
+        return f"{self.x}, {self.y}"
+
 class upgrade:
     a: int = 0
     b: int = 0

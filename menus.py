@@ -423,11 +423,14 @@ def points_state(points):
 def wait_for_map_load(timeout=240, poll=0.2, stable_polls=5):
     start = time.time()
 
+    print("awaiting black screen")
     while time.time() - start < timeout:
         if all(points_state(loading_screen_check)):
             break
         time.sleep(poll)
+    print("black screen")
 
+    print("awaiting map")
     stable = 0
     while time.time() - start < timeout:
         if not any(points_state(loading_screen_check)):
@@ -485,12 +488,12 @@ def popup():
 def freeplay():
     global play_state
     play_state_before = play_state
-    play_state = 0
+    play_state = 1
     time.sleep(1)
     click(button3_3)
     time.sleep(1)
     popup()
-    time.sleep(1)
+    time.sleep(2)
     play(play_state_before)
     time.sleep(1)
 
@@ -498,12 +501,18 @@ def freeplay():
 
 
 def game_to_main():
+    print("going to main menu")
     pyautogui.press(binds["pause"])
     click(game_pause_home, 3)
 
 def difficulty_select(diff):
+    if diff in difficulties:
+        print("setting difficulty:", diff)
+    else:
+        raise ValueError("difficulty", diff, "doesnt exist")
+        
     wait_for_difficulty_select()
-    
+
     keys_list = list(difficulties.keys())
     index = keys_list.index(diff)
 
@@ -539,7 +548,9 @@ def difficulty_select(diff):
 
 def map_select(name):
     if name not in maps:
-        raise ValueError("map name nod found")
+        raise ValueError("map name:", name, ",not found")
+    else:
+        print("selecting map:", name)
 
     if points_check(main_menu_check):
         click(play_btn)
@@ -554,6 +565,8 @@ def map_select(name):
     click(map_pos)
 
 def gold_bln_map(diff = 0):
+    print("selcting map with golden bloon on difficulty:", diff)
+
     map_pos = None
     match diff:
         case 0:
@@ -577,6 +590,8 @@ def gold_bln_map(diff = 0):
     click(map_pos)
 
 def monkey_team_map(diff = 0):
+    print("selcting map with monkey teams on difficulty:", diff)
+
     map_pos = None
     match diff:
         case 0:
@@ -600,11 +615,18 @@ def monkey_team_map(diff = 0):
     click(map_pos)
 
 def play(opt = -1):
+    if opt >= -1 and opt <= 2:
+        print("setting play speed to:", opt, "| ", end="")
+    else:
+        print("speed", opt, "doesnt exist")
+        return
+
     global play_state
 
     if opt == -1:
         pyautogui.press(binds["play"])
-        play_state = (play_state+1)%3
+        play_state = (play_state%2)+1
+        print(play_state, ",", end="")
         return
 
     if play_state == opt or opt == 0:
@@ -612,31 +634,39 @@ def play(opt = -1):
     for i in range(2):
         pyautogui.press(binds["play"])
         play_state = (play_state%2)+1
-        print(play_state)
-        time.sleep(0.05)
+        print(play_state, ",", end="")
+        time.sleep(0.1)
         if play_state == opt:
             break
+    print()
 
 def game_done_wait(home = True, timeout=99999, poll=1):
+    print("waiting for end, going to home:", home)
+
     start = time.time()
 
+    summary_screen = False
     win = True
 
     while time.time() - start < timeout:
         if points_check(victory_check):
+            summary_screen = True
+            click(next_btn)
             break
         elif points_check(gm_over_check):
-            break
+            summary_screen = True
             win = False
+            click(next_btn)
+            break
         elif points_check(game_over_chimp_check) or points_check(game_over_check):
-            return
+            win = False
+            break
         farming()
         time.sleep(poll)
 
-    click(next_btn)
 
-    while time.time() - start < timeout:
-        if points_check(game_done_check):
+    while time.time() - start < timeout and summary_screen:
+        if points_check(game_done_check) or points_check(game_over_chimp_check) or points_check(game_over_check):
             break
         time.sleep(poll)
 
@@ -649,6 +679,8 @@ def game_done_wait(home = True, timeout=99999, poll=1):
         freeplay()
 
 def insta_monkey_wait(timeout=99999, poll=1):
+    print("waiting for insta monkey")
+
     start = time.time()
 
     while time.time() - start < timeout:

@@ -18,9 +18,6 @@ village2_pos = vec2(0.2896, 0.6741)
 alchemist3_pos = vec2(0.3911, 0.6333)
 alchemist4_pos = vec2(0.3958, 0.6907)
 perm_spike_pos = vec2(0.0573, 0.6704)
-
-engineer_pos = vec2(0.8254, 0.9618)
-
 def main_game():
     sauda = monkey(sauda_pos, "sauda")
 
@@ -40,10 +37,6 @@ def main_game():
 
     glue = monkey(glue_pos, "glue")
     glue.upgrd(upgrade(0, 2, 5))
-
-    #engineer = monkey(engineer_pos, "engineer")
-    #engineer.upgrd(upgrade(0, 5, 0))
-
 def free_play():
     mermonkey = monkey(mermonkey_pos, "mermonkey")
     mermonkey.upgrd(upgrade(5, 2, 0))
@@ -67,17 +60,12 @@ def free_play():
     alchemis3 = monkey(alchemist3_pos, "alchemist")
     alchemis3.upgrd(upgrade(4, 2, 0))
 
-    alchemis4 = monkey(alchemist3_pos, "alchemist")
+    alchemis4 = monkey(alchemist4_pos, "alchemist")
     alchemis4.upgrd(upgrade(4, 2, 0))
 
-    perm_spike_pos = monkey(alchemist3_pos, "alchemist")
-    perm_spike_pos.upgrd(upgrade(2, 0, 5))
-
-
-
-def script():
-    difficulty(2)
-
+    perm_spike = monkey(perm_spike_pos, "spike")
+    perm_spike.upgrd(upgrade(2, 0, 5))
+def sapper_farm():
     for i in range(1):
         start = time.time()
         
@@ -90,6 +78,16 @@ def script():
         game_done_wait()
 
         print("loop time:", time.time()-start)
+
+
+
+def script():
+    difficulty(2)
+
+    sapper_farm()
+
+
+    
 
 
 
