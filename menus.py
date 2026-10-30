@@ -476,19 +476,23 @@ def popup():
     time.sleep(0.2)
     if points_check(map_load_popup_check):
         click(map_popup_ok)
+        time.sleep(0.2)
+        click(map_popup_ok)
+        time.sleep(0.2)
+        click(map_popup_ok)
     time.sleep(0.2)
 
 def freeplay():
     global play_state
     play_state_before = play_state
     play_state = 0
-    time.sleep(0.1)
+    time.sleep(1)
     click(button3_3)
-    time.sleep(0.1)
+    time.sleep(1)
     popup()
-    time.sleep(0.1)
+    time.sleep(1)
     play(play_state_before)
-    time.sleep(0.1)
+    time.sleep(1)
 
 
 
@@ -603,11 +607,11 @@ def play(opt = -1):
         play_state = (play_state+1)%3
         return
 
-    if play_state == opt:
+    if play_state == opt or opt == 0:
         return
-    for i in range(3):
+    for i in range(2):
         pyautogui.press(binds["play"])
-        play_state = (play_state+1)%3
+        play_state = (play_state%2)+1
         print(play_state)
         time.sleep(0.05)
         if play_state == opt:
@@ -654,3 +658,4 @@ def insta_monkey_wait(timeout=99999, poll=1):
         time.sleep(poll)
 
     click(vec2(0.5, 0.5))
+    time.sleep(1)

@@ -79,7 +79,7 @@ def cash_wait(money):
 
 
 class monkey:
-    mouse_move_time = .1
+    mouse_move_time = .2
 
     def __init__(self, _position, _type):
         self.position = _position
