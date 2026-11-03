@@ -69,13 +69,25 @@ def difficulty(diff = 0):
             tower_prices = tower_price_c
             hero_price = heroes_price_c
 
-def cash_wait(money):
+def cash_wait(money, refhresh = 1):
     mon = get_cash()
+
+    while mon == None:
+        time.sleep(refhresh)
+        print("cash not on screen", end="\r", flush=True)
+
     while mon < money:
         time.sleep(1/10)
         print("waiting for cash:", mon, "/", money, end="\r", flush=True)
         mon = get_cash()
         farming()
+
+        while mon == None:
+            time.sleep(refhresh)
+            print("cash not on screen", end="\r", flush=True)
+            mon = get_cash()
+
+
     print("waiting for cash:", mon, "/", money)
 
 

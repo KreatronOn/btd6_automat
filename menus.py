@@ -361,7 +361,7 @@ insta_monkey_check = {
     vec2(0.5266, 0.9991): (0, 0, 0),
     vec2(0.5260, 0.9991): (0, 0, 0),
 }
-collection_event_check = {
+halloween_collection_event_check = {
     vec2(0.1000, 0.3444): (97, 72, 111),
     vec2(0.3099, 0.2157): (104, 73, 122),
     vec2(0.9328, 0.8000): (75, 53, 88),
@@ -381,6 +381,15 @@ collection_event_check = {
     vec2(0.3490, 0.0315): (0, 120, 161),
     vec2(0.5833, 0.5944): (137, 96, 162),
     vec2(0.5849, 0.5963): (137, 96, 161),
+}
+collection_event_clicks = {
+    vec2(0.5000, 0.6278),
+    vec2(0.4250, 0.4944),
+    vec2(0.4245, 0.4944),
+    vec2(0.5724, 0.4935),
+    vec2(0.5724, 0.4935),
+    vec2(0.5036, 0.9176),
+    vec2(0.0479, 0.0602),
 }
 next_btn = vec2(0.4984, 0.8370)
 button1_4 = vec2(0.3260, 0.7519)
@@ -420,7 +429,7 @@ def is_black(rgb, threshold = 15):
     return max(rgb[:3]) <= threshold
 def points_state(points):
     return  [is_black(get_pixel(screen.to_px(p))) for p in points]
-def wait_for_map_load(timeout=240, poll=0.2, stable_polls=5):
+def wait_for_map_load(timeout=60*6, poll=0.2, stable_polls=5):
     start = time.time()
 
     print("awaiting black screen")
@@ -496,6 +505,18 @@ def freeplay():
     time.sleep(2)
     play(play_state_before)
     time.sleep(1)
+
+def collection_handle():
+    time.sleep(2)
+
+    if not points_check(halloween_collection_event_check):
+        return
+
+    print("collectio event")
+
+    for i in collection_event_clicks:
+        click(i)
+        time.sleep(4)
 
 
 
@@ -671,10 +692,14 @@ def game_done_wait(home = True, timeout=99999, poll=1):
         time.sleep(poll)
 
     if home:
+        global play_state
+        play_state = 0
         if win:
             click(button1_3)
         else:
             click(button1_4)
+        time.sleep(wait_for_map_load())
+        collection_handle()
     else:
         freeplay()
 
