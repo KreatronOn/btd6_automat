@@ -2,10 +2,13 @@ import pyautogui
 import time
 import mss
 import math
+import cv2
+import numpy as np
 
 from myvar import vec2
 from data import binds
 from mokey import difficulty, farming
+from screenspace import Screen
 
 screen = None
 animation_time = 0.1
@@ -174,12 +177,52 @@ map_select_check = {
     vec2(0.5521, 0.8704): (0, 224, 235),
     vec2(0.7094, 0.8843): (255, 52, 0),
 }
-map_1 = vec2(0.2729, 0.2500)
-map_2 = vec2(0.4969, 0.2500)
-map_3 = vec2(0.7214, 0.2500)
-map_4 = vec2(0.2719, 0.5389)
-map_5 = vec2(0.4953, 0.5417)
-map_6 = vec2(0.7047, 0.5361)
+SLOT_CENTERS = [
+    vec2(0.2729, 0.2500),
+    vec2(0.4969, 0.2500),
+    vec2(0.7214, 0.2500),
+    vec2(0.2719, 0.5389),
+    vec2(0.4953, 0.5417),
+    vec2(0.7047, 0.5361),
+]
+BEGGINER_MAPS = [
+    "monkey_meadow",
+    "in_the_loop",
+    "skull_tweak",
+    "three_mines_'round",
+    "spa_pits",
+    "tinkerton",
+    "tree_stump",
+    "town_center",
+    "middle_of_the_road",
+    "one_two_tree",
+    "scrapyard",
+    "the_cabin",
+    "resort",
+    "skates",
+    "lotus_island",
+    "candy_falls",
+    "winter_park",
+    "carved",
+    "park_path",
+    "alpine_run",
+    "frozen_over",
+    "cubism",
+    "four_circles",
+    "hedge",
+    "logs",
+    "end_of_the_road",
+]
+DIFF_BUTTONS = [
+    vec2(0.3004, 0.9083),
+    vec2(0.4348, 0.9021),
+    vec2(0.5656, 0.9056),
+    vec2(0.7004, 0.9028),
+]
+
+GOLDEN_TEMPLATE_PATH = "assets/gold.png"
+_template = cv2.imread(GOLDEN_TEMPLATE_PATH, cv2.IMREAD_COLOR)
+MATCH_THRESHOLD = 0.85
 
 loading_screen_check = [
     vec2(0.0042, 0.0481),
@@ -518,7 +561,61 @@ def collection_handle():
         click(i)
         time.sleep(4)
 
+def grab_screen(screen: Screen):
+    region = {"left": screen.left, "top": screen.top,
+              "width": screen.w, "height": screen.h}
+    with mss.mss() as sct:
+        return cv2.cvtColor(np.array(sct.grab(region)), cv2.COLOR_BGRA2BGR)
+def locate_template(screen: Screen, frame=None):
+    if frame is None:
+        frame = grab_screen(screen)
+    result = cv2.matchTemplate(frame, _template, cv2.TM_CCOEFF_NORMED)
+    _, score, _, top_left = cv2.minMaxLoc(result)
+    if score < MATCH_THRESHOLD:
+        return None, score
 
+    th, tw = _template.shape[:2]
+
+    cx = screen.left + top_left[0] + tw / 2
+    cy = screen.top + top_left[1] + th / 2
+    return screen.to_norm(cx, cy), score
+def find_golden_slot(screen: Screen, tries=3):
+    for _ in range(tries):
+        center, score = locate_template(screen)
+        if center is not None:
+            nx, ny = center
+            return min(
+                range(6),
+                key=lambda i: math.hypot(nx - SLOT_CENTERS[i].x,
+                                         ny - SLOT_CENTERS[i].y),
+            )
+        time.sleep(0.3)   # the bloon bobs up and down
+    return None
+def debug_match(out="debug.png", template=_template):
+    frame = grab_screen(screen)
+    result = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
+    _, score, _, tl = cv2.minMaxLoc(result)
+    th, tw = template.shape[:2]
+
+    for i, c in enumerate(SLOT_CENTERS):
+        p = (round(c.x * screen.w), round(c.y * screen.h))
+        cv2.circle(frame, p, 10, (255, 0, 0), 3)
+        cv2.putText(frame, str(i), (p[0] + 14, p[1]),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+    cv2.rectangle(frame, tl, (tl[0] + tw, tl[1] + th), (0, 0, 255), 3)
+    print(f"best score: {score:.3f}")
+    cv2.imwrite(out, frame)
+def diagnose():
+    frame = grab_screen(screen)
+    cv2.imwrite("frame_now.png", frame)               # what the script actually sees
+    result = cv2.matchTemplate(frame, _template, cv2.TM_CCOEFF_NORMED)
+    _, score, _, tl = cv2.minMaxLoc(result)
+    th, tw = _template.shape[:2]
+    cx, cy = tl[0] + tw / 2, tl[1] + th / 2
+    nx, ny = cx / screen.w, cy / screen.h
+    slot = min(range(6),
+               key=lambda i: math.hypot(nx - SLOT_CENTERS[i].x, ny - SLOT_CENTERS[i].y))
+    print(f"score={score:.3f}  px=({cx:.0f},{cy:.0f})  norm=({nx:.3f},{ny:.3f})  slot={slot}  template={tw}x{th}")
 
 
 def game_to_main():
@@ -585,44 +682,25 @@ def map_select(name):
 
     click(map_pos)
 
-def gold_bln_map(diff = 0):
-    print("selcting map with golden bloon on difficulty:", diff)
-
-    map_pos = None
-    match diff:
-        case 0:
-            map_pos = map_1
-        case 1:
-            map_pos = map_2
-        case 3:
-            map_pos = map_3
-        case 4:
-            map_pos = map_4
+def gold_bln_map():
+    print("selcting map with golden bloon on begginer map")
 
     if points_check(main_menu_check):
         click(play_btn)
         wait_for_map_select()
 
-    click(search_btn)
-    click(search_area)
+    pages = math.ceil(len(BEGGINER_MAPS)/6)
 
-    pyautogui.write("/GoldenBloons", interval=0.05)
-
-    click(map_pos)
+    for page in range(pages):
+        time.sleep(0.75)
+        slot = find_golden_slot()
+        if slot is not None:
+            return BEGGINER_MAPS[page*6 + slot]
+        click(DIFF_BUTTONS[0])
+    return None
 
 def monkey_team_map(diff = 0):
     print("selcting map with monkey teams on difficulty:", diff)
-
-    map_pos = None
-    match diff:
-        case 0:
-            map_pos = map_1
-        case 1:
-            map_pos = map_2
-        case 3:
-            map_pos = map_3
-        case 4:
-            map_pos = map_4
 
     if points_check(main_menu_check):
         click(play_btn)
@@ -633,7 +711,7 @@ def monkey_team_map(diff = 0):
 
     pyautogui.write("/MonkeyTeams", interval=0.05)
 
-    click(map_pos)
+    click(SLOT_CENTERS[diff])
 
 def play(opt = -1):
     if opt >= -1 and opt <= 2:

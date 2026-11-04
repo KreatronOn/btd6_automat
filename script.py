@@ -3,6 +3,7 @@ import pyautogui
 from mokey import monkey, difficulty
 from myvar import vec2, upgrade
 from menus import game_to_main, difficulty_select, map_select, gold_bln_map, monkey_team_map, play, game_done_wait, insta_monkey_wait
+from menus import debug_match, diagnose
 
 
 sauda_pos = vec2(0.4318, 0.6630)
@@ -136,7 +137,15 @@ gld_strt1_pos = {
         vec2(0.4224, 0.3417),
     ],
     "middle_of_the_road": [
-
+        vec2(0.2766, 0.4090),
+        vec2(0.4285, 0.8042),
+        vec2(0.6945, 0.6056),
+        vec2(0.4715, 0.9326),
+        vec2(0.3859, 0.9208),
+        vec2(0.5961, 0.5597),
+        vec2(0.5840, 0.9514),
+        vec2(0.6016, 0.4139),
+        vec2(0.6430, 0.3563),
     ],
     "one_two_tree": [
         vec2(0.1328, 0.7713),
@@ -249,7 +258,15 @@ gld_strt1_pos = {
         vec2(0.4427, 0.6250),
     ],
     "cubism": [
-
+        vec2(0.3258, 0.5542),
+        vec2(0.7176, 0.6500),
+        vec2(0.4207, 0.3083),
+        vec2(0.6098, 0.5993),
+        vec2(0.8281, 0.6431),
+        vec2(0.4668, 0.4632),
+        vec2(0.6051, 0.6882),
+        vec2(0.3988, 0.5361),
+        vec2(0.5012, 0.3472),
     ],
     "four_circles": [
         vec2(0.4224, 0.5009),
@@ -274,24 +291,72 @@ gld_strt1_pos = {
         vec2(0.5458, 0.5824),
     ],
     "logs": [
-
+        vec2(0.2641, 0.4583),
+        vec2(0.5723, 0.6611),
+        vec2(0.4008, 0.4451),
+        vec2(0.6098, 0.5250),
+        vec2(0.6199, 0.6875),
+        vec2(0.3266, 0.5201),
+        vec2(0.4344, 0.6333),
+        vec2(0.3348, 0.6347),
+        vec2(0.3691, 0.6889),
+        vec2(0.3688, 0.6847),
     ]
 }
 gld_strt2_pos = {
     "monkey_meadow": [
-
+        vec2(0.3281, 0.4979),
+        vec2(0.5977, 0.4500),
+        vec2(0.3707, 0.4951),
+        vec2(0.4441, 0.6229),
+        vec2(0.5133, 0.3236),
+        vec2(0.7000, 0.3729),
+        vec2(0.5074, 0.5132),
     ],
     "tree_stump": [
-
+        vec2(0.2492, 0.3319),
+        vec2(0.6551, 0.6785),
+        vec2(0.3711, 0.3854),
+        vec2(0.4480, 0.2674),
+        vec2(0.5477, 0.6326),
+        vec2(0.7684, 0.6521),
+        vec2(0.4313, 0.7333),
+    ],
+    "town_center": [
+        vec2(0.2816, 0.2826),
+        vec2(0.5461, 0.4840),
+        vec2(0.3047, 0.4083),
+        vec2(0.2051, 0.4799),
+        vec2(0.4496, 0.5681),
+        vec2(0.5672, 0.3111),
+        vec2(0.4320, 0.5000),
     ],
     "scrapyard": [
-
+        vec2(0.6828, 0.2125),
+        vec2(0.2418, 0.1660),
+        vec2(0.6965, 0.3410),
+        vec2(0.7594, 0.3993),
+        vec2(0.3555, 0.2146),
+        vec2(0.3133, 0.0451),
+        vec2(0.2930, 0.3201),
     ],
     "alpine_run": [
-
+        vec2(0.2824, 0.7556),
+        vec2(0.6082, 0.6222),
+        vec2(0.3508, 0.7257),
+        vec2(0.4004, 0.5611),
+        vec2(0.5145, 0.7069),
+        vec2(0.7086, 0.6021),
+        vec2(0.4773, 0.6354),
     ],
     "hedge": [
-
+        vec2(0.1633, 0.5472),
+        vec2(0.7059, 0.5354),
+        vec2(0.1656, 0.4889),
+        vec2(0.1387, 0.3187),
+        vec2(0.6469, 0.6924),
+        vec2(0.7918, 0.4181),
+        vec2(0.6012, 0.7688),
     ],
 }
 def gold_strt1(map):
@@ -351,12 +416,28 @@ def gold_strt2(map):
     glue.upgrd(upgrade(4, 2, 0))
 
     ninja.upgrd(upgrade(5, 0, 2))
+def gold_getter():
+    map = gold_bln_map()
 
+    print("found on map:", map)
+
+    # difficulty_select("hard_standard")
+
+    # play(2)
+
+    # if map in gld_strt1_pos:
+    #     gold_strt1(map)
+    # else:
+    #     gold_strt2(map)
+    
+    # game_done_wait()
 
 def script():
-    sapper_farm()
+    difficulty(2)
+    #sapper_farm()
 
-    # difficulty(2)
-    # play(2)
-    # gold_strt1("lotus_island")
-    # game_done_wait()
+    #gold_getter()
+
+    debug_match()
+    diagnose()
+

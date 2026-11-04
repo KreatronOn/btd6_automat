@@ -23,6 +23,10 @@ class vec2:
     def __str__(self):
         return f"{self.x}, {self.y}"
 
+    def __iter__(self):
+        yield self.x
+        yield self.y
+
 class upgrade:
     a: int = 0
     b: int = 0
