@@ -219,10 +219,23 @@ DIFF_BUTTONS = [
     vec2(0.5656, 0.9056),
     vec2(0.7004, 0.9028),
 ]
+MAPS_TL = vec2(0.1805, 0.1181)
+MAPS_BR = vec2(0.8199, 0.6743)
+
 
 GOLDEN_TEMPLATE_PATH = "assets/gold.png"
-_template = cv2.imread(GOLDEN_TEMPLATE_PATH, cv2.IMREAD_COLOR)
-MATCH_THRESHOLD = 0.85
+_template_rgba = cv2.imread(GOLDEN_TEMPLATE_PATH, cv2.IMREAD_UNCHANGED)
+
+if _template_rgba is not None and _template_rgba.shape[2] == 4:
+    _template = _template_rgba[:, :, :3]
+    raw_mask = _template_rgba[:, :, 3]
+    # Ensure the mask is strictly binary (0 or 255) for OpenCV matchTemplate
+    _, template_mask = cv2.threshold(raw_mask, 127, 255, cv2.THRESH_BINARY)
+else:
+    _template = _template_rgba[:, :, :3] if _template_rgba is not None else cv2.imread(GOLDEN_TEMPLATE_PATH, cv2.IMREAD_COLOR)
+    template_mask = None
+
+MATCH_THRESHOLD = 0.75  # Slightly lowered threshold just in case of slight compression/scaling differences
 
 loading_screen_check = [
     vec2(0.0042, 0.0481),
@@ -561,27 +574,93 @@ def collection_handle():
         click(i)
         time.sleep(4)
 
-def grab_screen(screen: Screen):
-    region = {"left": screen.left, "top": screen.top,
-              "width": screen.w, "height": screen.h}
-    with mss.mss() as sct:
-        return cv2.cvtColor(np.array(sct.grab(region)), cv2.COLOR_BGRA2BGR)
-def locate_template(screen: Screen, frame=None):
-    if frame is None:
-        frame = grab_screen(screen)
-    result = cv2.matchTemplate(frame, _template, cv2.TM_CCOEFF_NORMED)
-    _, score, _, top_left = cv2.minMaxLoc(result)
-    if score < MATCH_THRESHOLD:
-        return None, score
+def grab_region(tl: vec2 = MAPS_TL, br: vec2 = MAPS_BR):
+    px_left = screen.left + int(tl.x * screen.w)
+    px_top = screen.top + int(tl.y * screen.h)
+    px_width = int((br.x - tl.x) * screen.w)
+    px_height = int((br.y - tl.y) * screen.h)
+    
+    region = {"left": px_left, "top": px_top, "width": px_width, "height": px_height}
+    shot = _sct.grab(region)
+    return cv2.cvtColor(np.array(shot), cv2.COLOR_BGRA2BGR), px_left, px_top
+def locate_template(tl: vec2 = MAPS_TL, br: vec2 = MAPS_BR):
+    frame, origin_x, origin_y = grab_region(tl, br)
+    
+    best_score = -1
+    best_loc = None
+    best_w, best_h = 0, 0
+    
+    # Przeszukujemy skale od 0.4 (40%) do 1.6 (160%) w 25 krokach
+    for scale in np.linspace(0.4, 1.6, 25):
+        scaled_w = int(_template.shape[1] * scale)
+        scaled_h = int(_template.shape[0] * scale)
+        
+        # Pomijamy, jeśli skalowany szablon jest większy niż badany obszar
+        if scaled_w < 10 or scaled_h < 10 or scaled_w > frame.shape[1] or scaled_h > frame.shape[0]:
+            continue
+            
+        scaled_template = cv2.resize(_template, (scaled_w, scaled_h))
+        
+        if template_mask is not None:
+            scaled_mask = cv2.resize(template_mask, (scaled_w, scaled_h), interpolation=cv2.INTER_NEAREST)
+            result = cv2.matchTemplate(frame, scaled_template, cv2.TM_CCORR_NORMED, mask=scaled_mask)
+        else:
+            result = cv2.matchTemplate(frame, scaled_template, cv2.TM_CCOEFF_NORMED)
+            
+        _, score, _, top_left = cv2.minMaxLoc(result)
+        
+        if score > best_score:
+            best_score = score
+            best_loc = top_left
+            best_w, best_h = scaled_w, scaled_h
 
-    th, tw = _template.shape[:2]
+    if best_score < MATCH_THRESHOLD:
+        return None, best_score
 
-    cx = screen.left + top_left[0] + tw / 2
-    cy = screen.top + top_left[1] + th / 2
-    return screen.to_norm(cx, cy), score
-def find_golden_slot(screen: Screen, tries=3):
+    cx = origin_x + best_loc[0] + best_w / 2
+    cy = origin_y + best_loc[1] + best_h / 2
+    return screen.to_norm(cx, cy), best_score
+def debug_match(out="debug.png", template=_template):
+    frame, origin_x, origin_y = grab_region(MAPS_TL, MAPS_BR)
+    
+    # Szukamy też w debugu z uwzględnieniem najlepszej skali
+    best_score = -1
+    best_tl = None
+    best_tw, best_th = template.shape[1], template.shape[0]
+    
+    for scale in np.linspace(0.4, 1.6, 25):
+        sw = int(template.shape[1] * scale)
+        sh = int(template.shape[0] * scale)
+        if sw < 10 or sh < 10 or sw > frame.shape[1] or sh > frame.shape[0]:
+            continue
+        st = cv2.resize(template, (sw, sh))
+        sm = cv2.resize(template_mask, (sw, sh), interpolation=cv2.INTER_NEAREST) if template_mask is not None else None
+        
+        res = cv2.matchTemplate(frame, st, cv2.TM_CCORR_NORMED, mask=sm) if sm is not None else cv2.matchTemplate(frame, st, cv2.TM_CCOEFF_NORMED)
+        _, score, _, tl = cv2.minMaxLoc(res)
+        if score > best_score:
+            best_score = score
+            best_tl = tl
+            best_tw, best_th = sw, sh
+
+    for i, c in enumerate(SLOT_CENTERS):
+        p = (
+            round((c.x - MAPS_TL.x) * screen.w),
+            round((c.y - MAPS_TL.y) * screen.h)
+        )
+        cv2.circle(frame, p, 10, (255, 0, 0), 3)
+        cv2.putText(frame, str(i), (p[0] + 14, p[1]),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
+                    
+    if best_tl is not None:
+        cv2.rectangle(frame, best_tl, (best_tl[0] + best_tw, best_tl[1] + best_th), (0, 0, 255), 3)
+        
+    print(f"best score: {best_score:.3f}")
+    cv2.imwrite(out, frame)
+def find_golden_slot(tries=3):
     for _ in range(tries):
-        center, score = locate_template(screen)
+        center, score = locate_template()
+        debug_match()
         if center is not None:
             nx, ny = center
             return min(
@@ -591,31 +670,6 @@ def find_golden_slot(screen: Screen, tries=3):
             )
         time.sleep(0.3)   # the bloon bobs up and down
     return None
-def debug_match(out="debug.png", template=_template):
-    frame = grab_screen(screen)
-    result = cv2.matchTemplate(frame, template, cv2.TM_CCOEFF_NORMED)
-    _, score, _, tl = cv2.minMaxLoc(result)
-    th, tw = template.shape[:2]
-
-    for i, c in enumerate(SLOT_CENTERS):
-        p = (round(c.x * screen.w), round(c.y * screen.h))
-        cv2.circle(frame, p, 10, (255, 0, 0), 3)
-        cv2.putText(frame, str(i), (p[0] + 14, p[1]),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
-    cv2.rectangle(frame, tl, (tl[0] + tw, tl[1] + th), (0, 0, 255), 3)
-    print(f"best score: {score:.3f}")
-    cv2.imwrite(out, frame)
-def diagnose():
-    frame = grab_screen(screen)
-    cv2.imwrite("frame_now.png", frame)               # what the script actually sees
-    result = cv2.matchTemplate(frame, _template, cv2.TM_CCOEFF_NORMED)
-    _, score, _, tl = cv2.minMaxLoc(result)
-    th, tw = _template.shape[:2]
-    cx, cy = tl[0] + tw / 2, tl[1] + th / 2
-    nx, ny = cx / screen.w, cy / screen.h
-    slot = min(range(6),
-               key=lambda i: math.hypot(nx - SLOT_CENTERS[i].x, ny - SLOT_CENTERS[i].y))
-    print(f"score={score:.3f}  px=({cx:.0f},{cy:.0f})  norm=({nx:.3f},{ny:.3f})  slot={slot}  template={tw}x{th}")
 
 
 def game_to_main():

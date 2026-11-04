@@ -3,7 +3,6 @@ import pyautogui
 from mokey import monkey, difficulty
 from myvar import vec2, upgrade
 from menus import game_to_main, difficulty_select, map_select, gold_bln_map, monkey_team_map, play, game_done_wait, insta_monkey_wait
-from menus import debug_match, diagnose
 
 
 sauda_pos = vec2(0.4318, 0.6630)
@@ -436,8 +435,4 @@ def script():
     difficulty(2)
     #sapper_farm()
 
-    #gold_getter()
-
-    debug_match()
-    diagnose()
-
+    gold_getter()
