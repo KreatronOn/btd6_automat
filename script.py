@@ -433,6 +433,6 @@ def gold_getter():
 
 def script():
     difficulty(2)
-    #sapper_farm()
+    sapper_farm()
 
-    gold_getter()
+    #gold_getter()

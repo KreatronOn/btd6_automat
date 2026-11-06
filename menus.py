@@ -846,5 +846,6 @@ def insta_monkey_wait(timeout=99999, poll=1):
         farming()
         time.sleep(poll)
 
-    click(vec2(0.5, 0.5))
-    time.sleep(1)
+    while time.time() - start < timeout and points_check(insta_monkey_check):
+        click(vec2(0.5, 0.5))
+        time.sleep(1.5)
