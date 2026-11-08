@@ -32,15 +32,19 @@ this script will most likely result in a ban if used in most of online competiti
 
 ##### Notes:
 - to get positions of monkeys i recommend using the provided calibrate.py script by just running it normally, take the monkey where you want to place it and click f4, after you get every position press f9 to close the script and it will give you vec2 coordinates in the same order you took them
-- check if all the binds are correct, by default some things are nit binded to anything
-- to be careful switch cursor size to the smalest
+- check if all the binds are correct, by default some things are not binded to anything
+- to be careful switch cursor size to the smallest
 - positions are normalized (from 0 to 1 on width and height)
 - if you dont select map in script, make sure to set difficulty with difficulty(diff:int = 0), 0 - easy, 1 - normal, 2 - hard, 3 - impoppable, 4 - chimps (its mainly for pricing so this is enough)
 - if you dont want to go through entire game before you can open sandbox, get the positions, and hope for the best
 - you have to know where the game end screen and instamonkeys will appear in between the upgrades as right now their detection is manual
 - if there was a save where you wanted to play the script will pause on the window with question if you want to overwrite the save for you to click what you want (if not i recommend turning the script off first)
-- you can find more minimalistic documentation in script.py
-- if anything will cover the cash by accident the program will most likely crash
+
+##### Known issues:
+- there is no check for when a level up screen shows mid-game, so it requires manual input
+- collection event is being detected but correct actions to close the screen dont work
+- the provided function for sapper achievement can sometimes open the first map instead of logs for unknown reason
+- if the cash is not visible fr longer time while the program is trying to measure it, it can bug out the cash reading and it wont work after becoming visible
 
 ---
 ### Documentation:
@@ -118,12 +122,3 @@ targets_dartling = "normal", "locked"
 targets_dartling_i = "normal", "locked", "target_independent"
 
 difficulties = "easy", "easy_standard", "easy_sandbox", "primary_only", "deflation", "medium", "medium_standard", "medium_sandbox", "reverse", "military_only", "apopalypse", "hard", "hard_standard", "hard_sandbox", "alternate_bloons_rounds", "impoppable", "chimps", "magic_only", "double_hp_moabs", "half_cash"
-
-
----
-? - yea i dont know if ill do that
-functionality to be added:
-- checking for if something changed? like when placing the pixel color changes
-- collection event interruption
-- round_wait(round) that could read the current round and wait till given one?
-- some functions like place_next_to? that would account for monkey hitbox and place it right next to one another?

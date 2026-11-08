@@ -4,7 +4,6 @@ from mokey import monkey, difficulty
 from myvar import vec2, upgrade
 from menus import game_to_main, difficulty_select, map_select, gold_bln_map, monkey_team_map, play, game_done_wait, insta_monkey_wait
 
-
 sauda_pos = vec2(0.4318, 0.6630)
 wizard_pos = vec2(0.3297, 0.4910)
 alchemist_pos = vec2(0.3969, 0.3382)
@@ -65,8 +64,8 @@ def free_play():
 
     perm_spike = monkey(perm_spike_pos, "spike")
     perm_spike.upgrd(upgrade(2, 0, 5))
-def sapper_farm():
-    for i in range(100):
+def sapper_farm(x):
+    for i in range(x):
         start = time.time()
         
         map_select("logs")
@@ -400,39 +399,40 @@ def gold_strt2(map):
     alchemist1 = monkey(gld_strt2_pos[map][3], "alchemist") #ninja
     alchemist1.upgrd(upgrade(2, 0, 0))
 
-    village1 = monkey(gld_strt1_pos[map][3], "village") #ice
+    village1 = monkey(gld_strt2_pos[map][4], "village") #ice
     village1.upgrd(upgrade(0, 2, 0))
     village1.upgrd(upgrade(2, 2, 0))
 
-    alchemist2 = monkey(gld_strt2_pos[map][4], "alchemist") #ice
+    alchemist2 = monkey(gld_strt2_pos[map][5], "alchemist") #ice
     alchemist2.upgrd(upgrade(2, 0, 0))
 
     ninja.upgrd(upgrade(4, 0, 2))
     alchemist1.upgrd(upgrade(4, 2, 0))
 
-    glue = monkey(gld_strt2_pos[map][5], "glue")
+    glue = monkey(gld_strt2_pos[map][6], "glue")
     glue.upgrd(upgrade(2, 2, 0))
     glue.upgrd(upgrade(4, 2, 0))
 
     ninja.upgrd(upgrade(5, 0, 2))
-def gold_getter():
-    map = gold_bln_map()
+def gold_getter(x):
+    for _ in range(x):
+        map = gold_bln_map()
 
-    print("found on map:", map)
+        map_select(map)
 
-    # difficulty_select("hard_standard")
+        difficulty_select("hard_standard")
 
-    # play(2)
+        play(2)
 
-    # if map in gld_strt1_pos:
-    #     gold_strt1(map)
-    # else:
-    #     gold_strt2(map)
-    
-    # game_done_wait()
+        if map in gld_strt1_pos:
+            gold_strt1(map)
+        else:
+            gold_strt2(map)
+        
+        game_done_wait()
 
 def script():
     difficulty(2)
-    sapper_farm()
+    sapper_farm(1)
 
-    #gold_getter()
+    #gold_getter(1)

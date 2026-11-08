@@ -9,6 +9,7 @@ from myvar import vec2
 from data import binds
 from mokey import difficulty, farming
 from screenspace import Screen
+import golden_bloon
 
 screen = None
 animation_time = 0.1
@@ -225,7 +226,6 @@ MAPS_BR = vec2(0.8199, 0.6743)
 
 GOLDEN_TEMPLATE_PATH = "assets/gold.png"
 _template_rgba = cv2.imread(GOLDEN_TEMPLATE_PATH, cv2.IMREAD_UNCHANGED)
-
 if _template_rgba is not None and _template_rgba.shape[2] == 4:
     _template = _template_rgba[:, :, :3]
     raw_mask = _template_rgba[:, :, 3]
@@ -234,7 +234,6 @@ if _template_rgba is not None and _template_rgba.shape[2] == 4:
 else:
     _template = _template_rgba[:, :, :3] if _template_rgba is not None else cv2.imread(GOLDEN_TEMPLATE_PATH, cv2.IMREAD_COLOR)
     template_mask = None
-
 MATCH_THRESHOLD = 0.75  # Slightly lowered threshold just in case of slight compression/scaling differences
 
 loading_screen_check = [
@@ -574,102 +573,7 @@ def collection_handle():
         click(i)
         time.sleep(4)
 
-def grab_region(tl: vec2 = MAPS_TL, br: vec2 = MAPS_BR):
-    px_left = screen.left + int(tl.x * screen.w)
-    px_top = screen.top + int(tl.y * screen.h)
-    px_width = int((br.x - tl.x) * screen.w)
-    px_height = int((br.y - tl.y) * screen.h)
-    
-    region = {"left": px_left, "top": px_top, "width": px_width, "height": px_height}
-    shot = _sct.grab(region)
-    return cv2.cvtColor(np.array(shot), cv2.COLOR_BGRA2BGR), px_left, px_top
-def locate_template(tl: vec2 = MAPS_TL, br: vec2 = MAPS_BR):
-    frame, origin_x, origin_y = grab_region(tl, br)
-    
-    best_score = -1
-    best_loc = None
-    best_w, best_h = 0, 0
-    
-    # Przeszukujemy skale od 0.4 (40%) do 1.6 (160%) w 25 krokach
-    for scale in np.linspace(0.4, 1.6, 25):
-        scaled_w = int(_template.shape[1] * scale)
-        scaled_h = int(_template.shape[0] * scale)
-        
-        # Pomijamy, jeśli skalowany szablon jest większy niż badany obszar
-        if scaled_w < 10 or scaled_h < 10 or scaled_w > frame.shape[1] or scaled_h > frame.shape[0]:
-            continue
-            
-        scaled_template = cv2.resize(_template, (scaled_w, scaled_h))
-        
-        if template_mask is not None:
-            scaled_mask = cv2.resize(template_mask, (scaled_w, scaled_h), interpolation=cv2.INTER_NEAREST)
-            result = cv2.matchTemplate(frame, scaled_template, cv2.TM_CCORR_NORMED, mask=scaled_mask)
-        else:
-            result = cv2.matchTemplate(frame, scaled_template, cv2.TM_CCOEFF_NORMED)
-            
-        _, score, _, top_left = cv2.minMaxLoc(result)
-        
-        if score > best_score:
-            best_score = score
-            best_loc = top_left
-            best_w, best_h = scaled_w, scaled_h
 
-    if best_score < MATCH_THRESHOLD:
-        return None, best_score
-
-    cx = origin_x + best_loc[0] + best_w / 2
-    cy = origin_y + best_loc[1] + best_h / 2
-    return screen.to_norm(cx, cy), best_score
-def debug_match(out="debug.png", template=_template):
-    frame, origin_x, origin_y = grab_region(MAPS_TL, MAPS_BR)
-    
-    # Szukamy też w debugu z uwzględnieniem najlepszej skali
-    best_score = -1
-    best_tl = None
-    best_tw, best_th = template.shape[1], template.shape[0]
-    
-    for scale in np.linspace(0.4, 1.6, 25):
-        sw = int(template.shape[1] * scale)
-        sh = int(template.shape[0] * scale)
-        if sw < 10 or sh < 10 or sw > frame.shape[1] or sh > frame.shape[0]:
-            continue
-        st = cv2.resize(template, (sw, sh))
-        sm = cv2.resize(template_mask, (sw, sh), interpolation=cv2.INTER_NEAREST) if template_mask is not None else None
-        
-        res = cv2.matchTemplate(frame, st, cv2.TM_CCORR_NORMED, mask=sm) if sm is not None else cv2.matchTemplate(frame, st, cv2.TM_CCOEFF_NORMED)
-        _, score, _, tl = cv2.minMaxLoc(res)
-        if score > best_score:
-            best_score = score
-            best_tl = tl
-            best_tw, best_th = sw, sh
-
-    for i, c in enumerate(SLOT_CENTERS):
-        p = (
-            round((c.x - MAPS_TL.x) * screen.w),
-            round((c.y - MAPS_TL.y) * screen.h)
-        )
-        cv2.circle(frame, p, 10, (255, 0, 0), 3)
-        cv2.putText(frame, str(i), (p[0] + 14, p[1]),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
-                    
-    if best_tl is not None:
-        cv2.rectangle(frame, best_tl, (best_tl[0] + best_tw, best_tl[1] + best_th), (0, 0, 255), 3)
-        
-    print(f"best score: {best_score:.3f}")
-    cv2.imwrite(out, frame)
-def find_golden_slot(tries=3):
-    for _ in range(tries):
-        center, score = locate_template()
-        debug_match()
-        if center is not None:
-            nx, ny = center
-            return min(
-                range(6),
-                key=lambda i: math.hypot(nx - SLOT_CENTERS[i].x,
-                                         ny - SLOT_CENTERS[i].y),
-            )
-        time.sleep(0.3)   # the bloon bobs up and down
-    return None
 
 
 def game_to_main():
@@ -738,20 +642,7 @@ def map_select(name):
 
 def gold_bln_map():
     print("selcting map with golden bloon on begginer map")
-
-    if points_check(main_menu_check):
-        click(play_btn)
-        wait_for_map_select()
-
-    pages = math.ceil(len(BEGGINER_MAPS)/6)
-
-    for page in range(pages):
-        time.sleep(0.75)
-        slot = find_golden_slot()
-        if slot is not None:
-            return BEGGINER_MAPS[page*6 + slot]
-        click(DIFF_BUTTONS[0])
-    return None
+    return golden_bloon.select_golden_map()
 
 def monkey_team_map(diff = 0):
     print("selcting map with monkey teams on difficulty:", diff)
