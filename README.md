@@ -1,7 +1,4 @@
 # btd6_automat
-
-# ==🟡project wip==
-
 ### About:
  btd6_automat is a macro-like, library-like python script that allows for most* automation of tower placing and modifying, and some menu navigation, which also means there is little to no protection from when you type in something that will break the rest of the run
  
